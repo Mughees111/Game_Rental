@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "449750578504",
+    "project_id": "game-rental-6a9c1",
+    "storage_bucket": "game-rental-6a9c1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:449750578504:android:76793c96ca4605534def7d",
+        "android_client_info": {
+          "package_name": "com.dedevelopers.games"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "449750578504-546fn1ku56f0q660mekvf9515bdckm2f.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAAiR9EnSX9lqmSFzneVaomt5XLLZ2FPyo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "449750578504-546fn1ku56f0q660mekvf9515bdckm2f.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
