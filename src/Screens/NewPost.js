@@ -66,7 +66,7 @@ const NewPost = (props) => {
             //   })
             // }
             setSystemList(data.list)
-          }
+          } //test git
           else dropDownAlertRef.alertWithType("error", "Error", "No Internet");
         })
 
@@ -94,7 +94,6 @@ const NewPost = (props) => {
   }
 
   function getCondition() {
-
     var tor = [];
     for (let i = 1; i <= 10; i++) tor.push({
       title: i
