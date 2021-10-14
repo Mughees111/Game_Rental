@@ -21,7 +21,10 @@ export const DatePicker = (props: Props) => {
     const [show, setShow] = useState(false);
 
     const onChange = (event, selectedDate) => {
+        
         const currentDate = selectedDate || date;
+        console.log('selectedDate')
+        console.log(selectedDate)
         setShow(Platform.OS === 'ios');
         setDate(currentDate);
 
@@ -77,7 +80,7 @@ export const DatePicker = (props: Props) => {
                 value={date}
                 mode={mode}
                 maximumDate={new Date()}
-
+                // style={{height:200}}
                 // is24Hour={true}
                 display="spinner"
                 onChange={onChange}

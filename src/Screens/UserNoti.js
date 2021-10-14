@@ -21,7 +21,7 @@ const UserNoti = (props) => {
 
     const [loading, setLoading] = useState(false)
     const [notifs, setNotifs] = useState([])
-    
+
 
     function getNoti() {
         var x = dropDownAlertRef;
@@ -37,6 +37,7 @@ const UserNoti = (props) => {
                         if (data) {
                             setLoading(false)
                             if (data.action == 'success') {
+                                console.log(data)
                                 setNotifs(data.notifs)
                             }
                             else {
@@ -70,8 +71,8 @@ const UserNoti = (props) => {
             >
                 <View style={{ position: 'absolute', bottom: 0, height: "90%", width: "100%", backgroundColor: '#161527', borderRadius: 43 }}></View>
                 <View style={{ width: "90%", alignSelf: 'center' }}>
-                    <TouchableOpacity 
-                        onPress={()=>{
+                    <TouchableOpacity
+                        onPress={() => {
                             props.navigation.goBack();
                         }}
                         style={{ width: "100%", justifyContent: 'space-between', marginTop: 20, flexDirection: 'row' }}>
@@ -84,25 +85,27 @@ const UserNoti = (props) => {
                     />
                     <View style={{ marginTop: "15%" }}>
                         {
-                            notifs.length ? 
-                            <FlatList
-                            data={[1, 2, 4, 5, 123, 512, 1]}
-                            keyExtractor={(item, index) => index.toString()}
-                            renderItem={({ item }) => (
-                                <TouchableOpacity style={{ width: "92%", alignSelf: 'center', marginTop: 20, paddingBottom: 15, borderBottomWidth: 1, borderColor: "#A047C8" }}>
-                                    <Text style={{ color: "#fff", fontSize: 14, fontFamily: 'PRe', lineHeight: 22 }}>
+                            notifs.length ?
+                                <FlatList
+                                    data={notifs}
+                                    keyExtractor={(item, index) => index.toString()}
+                                    renderItem={({ item }) => (
+                                        <TouchableOpacity style={{ width: "92%", alignSelf: 'center', marginTop: 20, paddingBottom: 15, borderBottomWidth: 1, borderColor: "#A047C8" }}>
+                                            <Text style={{ color: "#fff", fontSize: 14, fontFamily: 'PSBo', lineHeight: 22 }}>{item.title}</Text>
+                                            {/* <Text style={{ color: "#fff", fontSize: 14, fontFamily: 'PRe', lineHeight: 22 }}>
                                         <Text style={{ fontFamily: 'PBo' }}>Mr. Talha</Text>
                                         <Text>  has Rented</Text>
                                         <Text style={{ fontFamily: 'PBo' }}>    Spiderman 3</Text>
                                         <Text>  for</Text>
                                         <Text style={{ fontFamily: 'PBo' }}>    7 Days 7 Days7 Days</Text>
-                                    </Text>
-                                </TouchableOpacity>
-                            )}
-                        />
-                        : !loading &&  <Text style={{fontFamily:'PBo',fontSize:25,color:'#fff',textAlign:'center',alignSelf:'center',marginTop:20}}>You have no notification</Text>
+                                    </Text> */}
+                                            <Text style={{ fontFamily: 'PRe', fontSize: 12, marginTop: 5, color: 'white' }}>{item.created_at}</Text>
+                                        </TouchableOpacity>
+                                    )}
+                                />
+                                : !loading && <Text style={{ fontFamily: 'PBo', fontSize: 25, color: '#fff', textAlign: 'center', alignSelf: 'center', marginTop: 20 }}>You have no notification</Text>
                         }
-                        
+
                     </View>
                 </View>
             </ImageBackground>

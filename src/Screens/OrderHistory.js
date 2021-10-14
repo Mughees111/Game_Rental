@@ -17,7 +17,7 @@ import Loader from "../utils/Loader";
 
 var dropDownAlertRef;
 
-const Buyer = (props) => {
+const OrderHistory = (props) => {
 
 
     const [pending, setPending] = useState([]);
@@ -87,7 +87,13 @@ const Buyer = (props) => {
         return (
             <TouchableOpacity
                 onPress={() => {
-                    props.navigation.navigate('PostDetails', { item, mAR: false })
+                    props.navigation.navigate('BuyerStackNavigator', {
+                        screen: 'PostDetails',
+                        params: {
+                            item,
+                            mAR: false
+                        }
+                    })
                 }}
                 style={{ marginLeft: 15, width: 156, height: 183 }}>
 
@@ -121,7 +127,13 @@ const Buyer = (props) => {
         return (
             <TouchableOpacity
                 onPress={() => {
-                    props.navigation.navigate('PostDetails', { item, mAR: true })
+                    props.navigation.navigate('BuyerStackNavigator', {
+                        screen: 'PostDetails',
+                        params: {
+                            item,
+                            mAR: true
+                        }
+                    })
                 }}
                 style={{ marginLeft: 15, width: 156, height: 183 }}>
 
@@ -205,15 +217,7 @@ const Buyer = (props) => {
 
                         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                             <Text style={{ fontFamily: 'LBo', fontSize: 18, color: '#FFFFFF', marginTop: 10 }}>Sent Request ({pending.length})</Text>
-                            {/* {pending.length ? <TouchableOpacity
-                                onPress={() => {
-                                    // console.log(pending[0])
-                                    // props.navigation.navigate('PostDetails', {
-                                    //     item: pending
-
-                                    // })
-                                }}
-                                style={{ position: 'absolute', right: 20, }}>
+                            {/* {pending.length ? <TouchableOpacity style={{ position: 'absolute', right: 20, }}>
                                 <Text style={{ fontFamily: 'LR', fontSize: 11, color: '#FFFFFF', textDecorationLine: "underline", }}>View All</Text>
                             </TouchableOpacity> : null} */}
                         </View>
@@ -324,7 +328,7 @@ const Buyer = (props) => {
             {/* <TouchableOpacity style={{ position: 'absolute', bottom: 100, right: 10, backgroundColor: '#A047C8', justifyContent: 'center', alignItems: 'center', width: 59, height: 59, borderRadius: 59 / 2, paddingBottom: 5 }}>
                 <PlusIcon />
             </TouchableOpacity> */}
-        </View >
+        </View>
     )
 }
 
@@ -385,4 +389,4 @@ const styles = StyleSheet.create({
     }
 })
 
-export default Buyer
+export default OrderHistory

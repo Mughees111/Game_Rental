@@ -3,10 +3,10 @@ import { Text, View, ImageBackground, TouchableOpacity, StyleSheet, FlatList, Im
 import Header from '../Components/Header'
 import { ArrowBack } from '../Components/SvgIcons'
 import { StatusBar } from 'expo-status-bar';
+import { storeItem } from '../utils/functions'
+import { changeLoggedInVendor } from '../../Common';
 
-
-const UserProfile = (props) => {
-
+const ProfileV = (props) => {
 
 
     return (
@@ -19,37 +19,39 @@ const UserProfile = (props) => {
                 <View style={{ position: 'absolute', bottom: 0, height: "90%", width: "100%", backgroundColor: '#161527', borderRadius: 43 }}>
                     <View style={{ paddingLeft: 40 }}>
 
+                      
+                       
                         <TouchableOpacity
+
+                        style={{marginTop:20}}
                             onPress={() => {
-                                props.navigation.navigate('ProfileDetails')
+
+                                props.navigation.navigate('SellerNavigator', {
+                                    screen: 'ChangePassword',
+                                    params: {
+                                        Vendor: true
+                                    }
+
+                                })
                             }}
-                        >
-                            <Text style={[styles.text, { marginTop: 40 }]}>Update Profile</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                            onPress={()=>{
-                                props.navigation.navigate('ChangePassword');
-                            }}
+
                         >
                             <Text style={styles.text}>Change Password</Text>
                         </TouchableOpacity>
-                        {/* <TouchableOpacity>
-                            <Text
-                                onPress={() => {
-                                    // props.navigation.navigate('PrivacyPolicy')
-                                }}
-                                style={styles.text}>Interest</Text>
-                        </TouchableOpacity> */}
-                        {/* <TouchableOpacity
+
+                        <TouchableOpacity
                             onPress={() => {
-                                // props.navigation.navigate('TandCond')
+                                props.navigation.navigate('SellerNavigator', {
+                                    screen: 'ProfileDetailsV',
+                                    params: {
+                                        Vendor: true
+                                    }
+
+                                })
                             }}
                         >
-                            <Text style={styles.text}>What system do you own?</Text>
-                        </TouchableOpacity> */}
-                        {/* <TouchableOpacity>
-                            <Text style={styles.text}>Gamertags</Text>
-                        </TouchableOpacity> */}
+                            <Text style={styles.text}>Update Profile</Text>
+                        </TouchableOpacity>
                     </View>
                 </View>
                 <View style={{ width: "90%", alignSelf: 'center' }}>
@@ -62,11 +64,11 @@ const UserProfile = (props) => {
                                 props.navigation.goBack();
                             }}
                             style={{ alignSelf: 'center' }}>
-                            <ArrowBack />
+                            {/* <ArrowBack /> */}
                         </TouchableOpacity>
                         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                             {/* <SettingsLargeIcon/> */}
-                            <Text style={{ marginLeft: 10, fontFamily: 'PSBo', fontSize: 16, color: '#FFFFFF', }}>Settings</Text>
+                            <Text style={{ marginLeft: 10, fontFamily: 'PSBo', fontSize: 16, color: '#FFFFFF', }}>Profile</Text>
                         </View>
                     </View>
                 </View>
@@ -76,6 +78,21 @@ const UserProfile = (props) => {
 
 
             </ImageBackground>
+            {/* <TouchableOpacity
+                onPress={() => {
+
+                    storeItem("login_data_vendor", "")
+                    changeLoggedInVendor.changeNow(2)
+                    // navigation.navigate('OnBoardingNavigator2')
+                    // setDrawer(false)
+
+
+                    // props.navigation.navigate('OnBoardingNavigator')
+                }}
+                style={{ width: "75%", alignSelf: 'center', backgroundColor: '#A047C8', justifyContent: 'center', alignItems: 'center', position: 'absolute', bottom: 100, height: 54, borderRadius: 9 }}>
+                <Text style={{ fontSize: 18, fontFamily: 'PMe', color: '#FFFFFF' }} ut</Text>
+            </TouchableOpacity> */}
+
         </View>
     )
 }
@@ -83,12 +100,12 @@ const UserProfile = (props) => {
 const styles = StyleSheet.create({
 
     text: {
-        fontFamily: 'PRe',
+        fontFamily: 'PMe',
         fontSize: 18,
         color: '#FFFFFF',
-        marginTop: 25
+        marginTop: 20
     }
 
 })
 
-export default UserProfile
+export default ProfileV

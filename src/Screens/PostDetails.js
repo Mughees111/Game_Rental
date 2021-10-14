@@ -61,24 +61,24 @@ const PostDetails = (props) => {
                             <ArrowBack />
                         </TouchableOpacity>
                         <View style={{ flexDirection: 'row' }}>
-                            <Image
+                            {/* <Image
                                 style={{ width: 44.16, height: 43.37, borderRadius: 22 }}
                                 // source={{uri:item.post.images[0]}}
                                 source={require("../assets/ChatsProfile.png")}
-                            />
+                            /> */}
                             <View style={{ marginLeft: 5 }}>
-                                <Text style={{ fontSize: 13, color: '#FFFFFF', fontWeight: 'bold' }}>Joe Adam</Text>
+                                {/* <Text style={{ fontSize: 13, color: '#FFFFFF', fontWeight: 'bold' }}>Joe Adam</Text>
                                 <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 5 }}>
                                     <View style={{ width: 7, height: 7, backgroundColor: '#FFFFFF', borderRadius: 3.5 }}></View>
                                     <Text style={{ marginLeft: 3, color: '#FFFFFF', fontSize: 5 }}>Online</Text>
-                                </View>
+                                </View> */}
                             </View>
                         </View>
                     </View>
                 </View>
 
 
-                <View style={{ paddingHorizontal: 20, marginTop: 30 }}>
+                <View style={{ paddingHorizontal: 20, marginTop: 40 }}>
                     <Text style={{ fontFamily: 'LBo', fontSize: 18, color: '#FFFFFF' }}>Out on Rent</Text>
 
                     <Text style={[styles.headingText, { marginTop: 30 }]}>Order ID</Text>

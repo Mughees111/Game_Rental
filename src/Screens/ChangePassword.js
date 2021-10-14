@@ -120,7 +120,7 @@ const ChangePassword = (props) => {
                             <ArrowBack />
                         </TouchableOpacity>
                         <View style={{ flexDirection: 'row' }}>
-                            <Image
+                            {/* <Image
                                 style={{ width: 44.16, height: 43.37, borderRadius: 22 }}
                                 source={require("../assets/ChatsProfile.png")}
                             />
@@ -130,7 +130,7 @@ const ChangePassword = (props) => {
                                     <View style={{ width: 7, height: 7, backgroundColor: '#FFFFFF', borderRadius: 3.5 }}></View>
                                     <Text style={{ marginLeft: 3, color: '#FFFFFF', fontSize: 5 }}>Online</Text>
                                 </View>
-                            </View>
+                            </View> */}
                         </View>
                     </View>
                     {/* TextInput */}

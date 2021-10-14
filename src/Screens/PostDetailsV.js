@@ -29,7 +29,7 @@ const PostDetailsV = (props) => {
     const [loading,setLoading] = useState(false)
     const [user, setUser] =useState();
 
-
+    console.log(item)
 
     useFocusEffect(React.useCallback(() => {
         retrieveItem("login_data_vendor")
@@ -62,10 +62,10 @@ const PostDetailsV = (props) => {
                             onPress={() => {
                                 props.navigation.goBack();
                             }}
-                            style={{ alignSelf: 'center' }}>
+                            style={{ alignSelf: 'center',padding:10,marginLeft:-5 }}>
                             <ArrowBack />
                         </TouchableOpacity>
-                        <View style={{ flexDirection: 'row' }}>
+                        {/* <View style={{ flexDirection: 'row' }}>
                             <Image
                                 style={{ width: 44.16, height: 43.37, borderRadius: 22 }}
                                 // source={{uri:item.post.images[0]}}
@@ -78,7 +78,7 @@ const PostDetailsV = (props) => {
                                     <Text style={{ marginLeft: 3, color: '#FFFFFF', fontSize: 5 }}>Online</Text>
                                 </View>
                             </View>
-                        </View>
+                        </View> */}
                     </View>
                 </View>
 
@@ -131,8 +131,8 @@ const PostDetailsV = (props) => {
                                     source={require("../assets/Mask4.png")}
                                 />
                                 <View style={{ position: 'absolute', bottom: 10, alignSelf: 'center', alignItems: 'center' }}>
-                                    <Text style={{ color: "#FFFFFF", fontSize: "LR", fontSize: 10, alignSelf: 'center' }}>{item.post.title}</Text>
-                                    <Text style={{ color: "#FFFFFF", fontSize: "LBo", fontSize: 16, marginTop: 5 }}>{item.post.game_title}</Text>
+                                    <Text style={{ color: "#FFFFFF", fontSize: "LR", fontSize: 10, alignSelf: 'center' }}>{item?.post?.game_title}</Text>
+                                    <Text style={{ color: "#FFFFFF", fontSize: "LBo", fontSize: 16, marginTop: 5 }}>{item.post.title}</Text>
                                     <Text>Asad Sultan</Text>
 
                                 </View>

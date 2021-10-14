@@ -12,68 +12,15 @@ const ViewAllV = (props) => {
 
     const item = props.route.params.data.post ? props.route.params.data.post : props.route.params.data;
     const title = props.route.params.title;
-    console.log(item)
-    // console.log(item[0])
+    const userData = props.route.params.userData&&props.route.params.userData
+
 
 
 
     const keyExtractor = useCallback((item, index) => index.toString(), []);
-    const topRatedData = [
-        {
-            name: " Asad Sultan",
-            gameName: "Game Name",
-            image: require("../assets/img7.png")
-        },
-        {
-            name: " Asad Sultan",
-            gameName: "Game Name",
-            image: require("../assets/img8.png")
-        },
-        {
-            name: " Asad Sultan",
-            gameName: "Game Name",
-            image: require("../assets/img7.png")
-        },
-        {
-            name: " Asad Sultan",
-            gameName: "Game Name",
-            image: require("../assets/img8.png")
-        },
-        {
-            name: " Asad Sultan",
-            gameName: "Game Name",
-            image: require("../assets/img7.png")
-        },
-        {
-            name: " Asad Sultan",
-            gameName: "Game Name",
-            image: require("../assets/img8.png")
-        },
-
-    ]
-
-    const recommendedData = [
-        {
-            name: " Asad Sultan",
-            gameName: "Game Name",
-            image: require("../assets/img7.png")
-        },
-        {
-            name: " Asad Sultan",
-            gameName: "Game Name",
-            image: require("../assets/img8.png")
-        },
-        {
-            name: " Asad Sultan",
-            gameName: "Game Name",
-            image: require("../assets/img6.png")
-        },
-
-    ]
 
     const renderItems = useCallback(({ item, index }) => {
-        console.log('item')
-        console.log(item.away)
+        
         return (
             <TouchableOpacity
 
@@ -87,7 +34,7 @@ const ViewAllV = (props) => {
 
 
                 <ImageBackground
-                    source={{ uri:item.post ? item.post.images[0] :  item.images[0] }}
+                    source={{ uri: item.post ? item.post.images[0] : item.images[0] }}
                     style={{ width: 156, height: 183, overflow: 'hidden' }}
                 >
 
@@ -100,8 +47,7 @@ const ViewAllV = (props) => {
 
                     <View style={{ position: 'absolute', bottom: 25, alignSelf: 'center' }}>
                         <Text style={{ color: "#FFFFFF", fontSize: "LR", fontSize: 8, alignSelf: 'center' }}>{item.title ? item.title : item.post.title}</Text>
-                        <Text style={{ color: "#FFFFFF", fontSize: "LBo", fontSize: 13 }}>{item.game_title ?  item.game_title :item.post.game_title}</Text>
-                        {/* <Text>Asad Sultan</Text> */}
+                        <Text style={{ color: "#FFFFFF", fontSize: "LBo", fontSize: 13 }}>{item.game_title?item.game_title : item.post?.game_title?item.post.game_title:null}</Text>
 
                     </View>
                 </ImageBackground>
@@ -115,7 +61,7 @@ const ViewAllV = (props) => {
     })
 
 
-   
+
 
     return (
         <View style={{ flex: 1, backgroundColor: '#A047C8' }}>
@@ -142,10 +88,10 @@ const ViewAllV = (props) => {
                         <View style={{ flexDirection: 'row' }}>
                             <Image
                                 style={{ width: 44.16, height: 43.37, borderRadius: 22 }}
-                                source={require("../assets/ChatsProfile.png")}
+                                source={{uri:userData?.profile_pic}}
                             />
                             <View style={{ marginLeft: 5 }}>
-                                <Text style={{ fontSize: 13, color: '#FFFFFF', fontWeight: 'bold' }}>Joe Adam</Text>
+                                <Text style={{ fontSize: 13, color: '#FFFFFF', fontWeight: 'bold' }}>{userData?.name}</Text>
                                 <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 5 }}>
                                     <View style={{ width: 7, height: 7, backgroundColor: '#FFFFFF', borderRadius: 3.5 }}></View>
                                     <Text style={{ marginLeft: 3, color: '#FFFFFF', fontSize: 5 }}>Online</Text>

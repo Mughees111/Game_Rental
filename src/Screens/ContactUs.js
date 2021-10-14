@@ -1,11 +1,11 @@
 import React, { useCallback, useState } from 'react'
 import { Text, View, ImageBackground, TouchableOpacity, StyleSheet, FlatList, Image, Dimensions, TextInput, ScrollView } from 'react-native'
 import Header from '../Components/Header'
-import { ArrowBack } from '../Components/SvgIcons'
+import { ArrowBack, FbIcon, InstaIcon, LocationIcon, Phone } from '../Components/SvgIcons'
 import { StatusBar } from 'expo-status-bar';
 
 
-const Settings = (props) => {
+const ContactUs = (props) => {
 
     const keyExtractor = useCallback((item, index) => index.toString(), []);
     const [sentRequest, setSentRequest] = useState(false)
@@ -67,38 +67,22 @@ const Settings = (props) => {
                 style={{ width: "100%", height: 265, flex: 1 }}
             >
 
-                <View style={{ position: 'absolute', bottom: 0, height: "90%", width: "100%", backgroundColor: '#161527', borderRadius: 43 }}>
-                    <View style={{ paddingLeft: 40 }}>
-
-                        <TouchableOpacity
-                            onPress={() => {
-                                props.navigation.navigate('Support')
-                            }}
-                        >
-                            <Text style={[styles.text, { marginTop: 40 }]}>Support</Text>
+                <View style={{ paddingHorizontal: 25, position: 'absolute', bottom: 0, height: "90%", width: "100%", backgroundColor: '#161527', borderRadius: 43 }}>
+                    <View style={{ flexDirection: 'row', marginTop: 10, alignItems: 'center', justifyContent: 'center' }}>
+                        <TouchableOpacity style={{ padding: 20 }}>
+                            <Image source={require('../assets/instaIcon.png')} />
                         </TouchableOpacity>
-                        <TouchableOpacity
-                            onPress={() => props.navigation.navigate('ContactUs')}
-                        >
-                            <Text style={styles.text}>Contact Us</Text>
+                        <TouchableOpacity style={{ padding: 20 }}>
+                            <FbIcon />
                         </TouchableOpacity>
-                        <TouchableOpacity>
-                            <Text
-                                onPress={() => {
-                                    props.navigation.navigate('PrivacyPolicy')
-                                }}
-                                style={styles.text}>Privacy Policy</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                            onPress={() => {
-                                props.navigation.navigate('TandCond')
-                            }}
-                        >
-                            <Text style={styles.text}>Terms and Conditions</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity>
-                            <Text style={styles.text}>Share App</Text>
-                        </TouchableOpacity>
+                    </View>
+                    <View style={{ flexDirection: 'row' }}>
+                        <LocationIcon />
+                        <Text style={{ marginLeft: 10, fontFamily: 'PRe', fontSize: 14, color: '#FFFFFF', }}>lorem ipsum, or lipsum as it is sometimes known, is dummy text used in laying out print,</Text>
+                    </View>
+                    <View style={{ flexDirection: 'row',marginTop:20 }}>
+                        <Phone color="white" />
+                        <Text style={{ marginLeft: 10, fontFamily: 'PRe', fontSize: 14, color: '#FFFFFF', }}>536546657567</Text>
                     </View>
                 </View>
                 <View style={{ width: "90%", alignSelf: 'center' }}>
@@ -115,9 +99,11 @@ const Settings = (props) => {
                         </TouchableOpacity>
                         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                             {/* <SettingsLargeIcon/> */}
-                            <Text style={{ marginLeft: 10, fontFamily: 'PSBo', fontSize: 16, color: '#FFFFFF', }}>Settings</Text>
+                            <Text style={{ marginLeft: 10, fontFamily: 'PSBo', fontSize: 16, color: '#FFFFFF', }}>Contact Us</Text>
                         </View>
                     </View>
+
+
                 </View>
 
 
@@ -148,4 +134,4 @@ const styles = StyleSheet.create({
 
 })
 
-export default Settings
+export default ContactUs

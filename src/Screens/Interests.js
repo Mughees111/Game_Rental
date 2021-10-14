@@ -1,11 +1,11 @@
-import React, { useCallback, useState , useEffect} from 'react'
-import { View, Text, StyleSheet, Platform,  TouchableOpacity, FlatList, ActivityIndicator } from 'react-native'
+import React, { useCallback, useState, useEffect } from 'react'
+import { View, Text, StyleSheet, Platform, TouchableOpacity, FlatList, ActivityIndicator } from 'react-native'
 
 import { LinearGradient } from 'expo-linear-gradient';
 import { StatusBar } from 'expo-status-bar';
 
 
-import { doConsole, retrieveItem, storeItem,validateEmail } from "./../utils/functions";
+import { doConsole, retrieveItem, storeItem, validateEmail } from "./../utils/functions";
 import { urls } from "./../utils/Api_urls";
 import { changeLoggedIn, changeLoggedInVendor } from "../../Common";
 
@@ -22,41 +22,40 @@ import * as Permissions from 'expo-permissions';
 const Interests = (props) => {
 
 
-  const navigation = useNavigation()
+    const navigation = useNavigation()
 
-  const [loading, setLoading] = useState(false)
-  const [interests, setInterests] = useState([])
-  const [address, setAddress] = useState("")
-  const [langtext, setLangtext] = useState(false)
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
+    const [loading, setLoading] = useState(false)
+    const [interests, setInterests] = useState([])
+    const [address, setAddress] = useState("")
+    const [langtext, setLangtext] = useState(false)
+    const [email, setEmail] = useState('')
+    const [password, setPassword] = useState('')
 
-  const [notif_token, setNotif_token] = useState('')
+    const [notif_token, setNotif_token] = useState('')
 
-  const [user, setUser] = React.useState({})
-  useFocusEffect(React.useCallback(() => {
-      retrieveItem("login_data").then((data) => {
-          setUser(data)
-      })
-  }, []))
+    const [user, setUser] = React.useState({})
+    useFocusEffect(React.useCallback(() => {
+        retrieveItem("login_data").then((data) => {
+            setUser(data)
+        })
+    }, []))
 
-  useEffect(()=>{
-      if(user && user?.token)
-      {
-          getData()
-          askNotificationPermission()
-      }
-  },[user])
-
+    useEffect(() => {
+        if (user && user?.token) {
+            getData()
+            askNotificationPermission()
+        }
+    }, [user])
 
 
-  const getData = ()=>{
-    setLoading(true)
-        
+
+    const getData = () => {
+        setLoading(true)
+
         var body_data = {
-            token:user?.token
+            token: user?.token
         };
-        doConsole(" I request @ "+urls.API+"get_interests");
+        doConsole(" I request @ " + urls.API + "get_interests");
         doConsole(body_data);
         fetch(urls.API + 'get_interests', {
             method: 'POST',
@@ -66,52 +65,50 @@ const Interests = (props) => {
             },
             body: JSON.stringify(body_data),
         }).then((response) => response.json())
-        .then((responseJson) => {
-            doConsole(" I receive ");
-            doConsole(responseJson);
-            if (responseJson.action == "success") {
-                setInterestsArray(responseJson.list)
+            .then((responseJson) => {
+                doConsole(" I receive ");
+                doConsole(responseJson);
+                if (responseJson.action == "success") {
+                    setInterestsArray(responseJson.list)
+                    setLoading(false)
+                }
+                else {
+                    setLoading(false)
+                    alertRef.alertWithType("error", "Error", responseJson.error)
+                }
+            }).catch((error) => {
                 setLoading(false)
-            }
-            else {
-                setLoading(false)
-                alertRef.alertWithType("error","Error",responseJson.error)
-            }
-        }).catch((error) => {
-            setLoading(false)
-            alertRef.alertWithType("error","Error","Internet error")
-        });
-  }
-
-  const doSignup = ()=>{
-  
-
-
-    if(state<3)
-    {
-      alertRef.alertWithType("error","Error","Please select at least 3 interests");
-      return;
+                alertRef.alertWithType("error", "Error", "Internet error")
+            });
     }
-    goSignup()
-  }
+
+    const doSignup = () => {
 
 
-  const goSignup = ()=>{
-    setLoading(true)
 
-    var list = []
-    for(var i = 0; i<=interestsArray.length-1; i++)
-    {
-        if(interestsArray[i].selected)
-        {
-            list.push(interestsArray[i]?.id)
+        if (state < 3) {
+            alertRef.alertWithType("error", "Error", "Please select at least 3 interests");
+            //   navigation.navigate("TitleYouOwn")
+            return;
         }
+        goSignup()
     }
 
 
-        
-        var body_data = {token:user?.token,list};
-        doConsole(" I request @ "+urls.API+"update_interests");
+    const goSignup = () => {
+        setLoading(true)
+
+        var list = []
+        for (var i = 0; i <= interestsArray.length - 1; i++) {
+            if (interestsArray[i].selected) {
+                list.push(interestsArray[i]?.id)
+            }
+        }
+
+
+
+        var body_data = { token: user?.token, list };
+        doConsole(" I request @ " + urls.API + "update_interests");
         doConsole(body_data);
         fetch(urls.API + 'update_interests', {
             method: 'POST',
@@ -121,42 +118,38 @@ const Interests = (props) => {
             },
             body: JSON.stringify(body_data),
         }).then((response) => response.json())
-        .then((responseJson) => {
-            doConsole(" I receive ");
-            doConsole(responseJson);
-            if (responseJson.action == "success") {
-                storeItem("login_data", responseJson.data).then(() => {
-                  setLoading(false)
-                    if(responseJson.data.step==1)
-                    {
-                        navigation.navigate("Address1")
-                    }
-                    else if(responseJson.data.step==2)
-                    {
-                        navigation.navigate("Interests")
-                    }
-                    else if(responseJson.data.step==3)
-                    {
-                        navigation.navigate("TitleYouOwn")
-                    }
-                    else if(responseJson.data.step==4)
-                    {
-                        navigation.navigate("SystemOwns")
-                    }
-                    else{
-                        changeLoggedIn.changeNow(1)
-                    }
-                });
-            }
-            else {
+            .then((responseJson) => {
+                doConsole(" I receive ");
+                doConsole(responseJson);
+                if (responseJson.action == "success") {
+                    storeItem("login_data", responseJson.data).then(() => {
+                        setLoading(false)
+                        if (responseJson.data.step == 1) {
+                            navigation.navigate("Address1")
+                        }
+                        else if (responseJson.data.step == 2) {
+                            navigation.navigate("Interests")
+                        }
+                        else if (responseJson.data.step == 3) {
+                            navigation.navigate("TitleYouOwn")
+                        }
+                        else if (responseJson.data.step == 4) {
+                            navigation.navigate("SystemOwns")
+                        }
+                        else {
+                            changeLoggedIn.changeNow(1)
+                        }
+                    });
+                }
+                else {
+                    setLoading(false)
+                    alertRef.alertWithType("error", "Error", responseJson.error)
+                }
+            }).catch((error) => {
                 setLoading(false)
-                alertRef.alertWithType("error","Error",responseJson.error)
-            }
-        }).catch((error) => {
-            setLoading(false)
-            alertRef.alertWithType("error","Error","Internet error")
-        });
-  }
+                alertRef.alertWithType("error", "Error", "Internet error")
+            });
+    }
 
 
 
@@ -166,15 +159,15 @@ const Interests = (props) => {
         return (
             <TouchableOpacity
                 onPress={() => {
-                    if(state<30){
+                    if (state < 30) {
                         item.selected = !item.selected
-                        setState(state+1)
+                        setState(state + 1)
                     }
                     else {
-                        if(item.selected==true){
+                        if (item.selected == true) {
                             item.selected = false
-                            setState(state-1)
-                        } 
+                            setState(state - 1)
+                        }
                     }
                 }}
                 style={[item.selected ? styles.selectedInterestContainer : styles.unSelectedInterestContainer]}>
@@ -207,30 +200,33 @@ const Interests = (props) => {
 
     const askNotificationPermission = async () => {
         const { status: existingStatus } = await Permissions.getAsync(
-          Permissions.NOTIFICATIONS
+            Permissions.NOTIFICATIONS
         );
         let finalStatus = existingStatus;
-    
-    
+
+
         if (finalStatus !== 'granted') {
             const { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
             finalStatus = status;
         }
         if (finalStatus == 'granted') {
-            try{
-            let token = await Notifications.getExpoPushTokenAsync();
-            setNotif_token(token.data)
-            store_location_on_server(token.data)
-            } catch(error)
-            {
-              alert(error);
+            try {
+                let token = await Notifications.getExpoPushTokenAsync();
+                console.log('token is')
+                console.log(token.data)
+                setNotif_token(token.data)
+                store_location_on_server(token.data)
+            } catch (error) {
+                console.log('error is ')
+                console.log(error)
+                alert(error);
             }
         }
     }
 
 
-    const store_location_on_server= async (localToken)=>{
-        const dbData = {token:user?.token ?? "", notif_key:localToken};
+    const store_location_on_server = async (localToken) => {
+        const dbData = { token: user?.token ?? "", notif_key: localToken };
         console.log(dbData);
         console.log("push token")
         fetch(urls.API + 'do_store_notifiation_key', {
@@ -260,30 +256,30 @@ const Interests = (props) => {
                 style={{ flex: 1 }}
             >
 
-                <Text style={{ fontFamily: 'PBo', fontSize: 24, color: '#FFFFFF', marginTop: Platform.OS == 'ios' ? 30 : 27, alignSelf: 'flex-end', width: "30%", }}>LOGO</Text>
+                <Text style={{ fontFamily: 'PBo', fontSize: 24, color: '#FFFFFF', marginTop: Platform.OS == 'ios' ? 30 : 27, alignSelf: 'flex-end', width: "30%", }}> </Text>
                 <View style={{ flexDirection: 'row', marginTop: 50 }}>
                     <View style={{ width: 223 - 53, height: 39, borderWidth: 1, borderLeftWidth: 0, marginLeft: -5, borderColor: '#FFFFFF', borderRadius: 9, justifyContent: 'center', alignItems: 'center' }}>
                         <Text style={{ fontSize: 18, fontFamily: 'PMe', color: '#FFFFFF' }}>Interests</Text>
                     </View>
                     <Text style={{ color: '#818181', alignSelf: 'flex-end', marginLeft: 10, fontFamily: 'PLi', fontSize: 14 }}>Select at least 3</Text>
                 </View>
-                    <FlatList
-                        data={interestsArray}
-                        keyExtractor={keyExtractor}
-                        contentContainerStyle={{marginTop:10,}}
-                        columnWrapperStyle={{ justifyContent: 'space-between',width: "85%",alignSelf:'center' }}
-                        numColumns={2}
-                        renderItem={renderInterests}
-                    />
+                <FlatList
+                    data={interestsArray}
+                    keyExtractor={keyExtractor}
+                    contentContainerStyle={{ marginTop: 10, }}
+                    columnWrapperStyle={{ justifyContent: 'space-between', width: "85%", alignSelf: 'center' }}
+                    numColumns={2}
+                    renderItem={renderInterests}
+                />
 
-                    <TouchableOpacity 
-                         onPress={()=>{
-                            // props.navigation.navigate('TitleYouOwn')
-                            if(!loading) doSignup()
-                        }}
-                        style={{position: 'absolute',bottom:20, width: 314,height:54,backgroundColor:'#A047C8',borderRadius:9,justifyContent:'center',alignItems:'center',alignSelf:'center'}}>
-                        <Text style={{color:'#FFFFFF',fontFamily:'PMe',fontSize:18}}>Next</Text>{loading && <ActivityIndicator color={"#fff"} size={"small"} />}
-                    </TouchableOpacity>
+                <TouchableOpacity
+                    onPress={() => {
+                        // props.navigation.navigate('TitleYouOwn')
+                        if (!loading) doSignup()
+                    }}
+                    style={{ position: 'absolute', bottom: 20, width: 314, height: 54, backgroundColor: '#A047C8', borderRadius: 9, justifyContent: 'center', alignItems: 'center', alignSelf: 'center' }}>
+                    <Text style={{ color: '#FFFFFF', fontFamily: 'PMe', fontSize: 18 }}>Next</Text>{loading && <ActivityIndicator color={"#fff"} size={"small"} />}
+                </TouchableOpacity>
 
 
             </LinearGradient>
@@ -319,7 +315,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         marginTop: 20,
-        borderRadius:9
+        borderRadius: 9
     },
     unSelectedInterestText: {
         fontSize: 14,
@@ -341,7 +337,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         marginTop: 20,
-        borderRadius:9
+        borderRadius: 9
     },
 })
 

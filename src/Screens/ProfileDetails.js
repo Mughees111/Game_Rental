@@ -112,7 +112,7 @@ const ProfileDetails = (props) => {
 
 
     useEffect(() => {
-        
+
         retrieveItem("login_data")
             .then((d) => {
                 console.log(d)
@@ -164,10 +164,10 @@ const ProfileDetails = (props) => {
                         <View style={{ flexDirection: 'row' }}>
                             <Image
                                 style={{ width: 44.16, height: 43.37, borderRadius: 22 }}
-                                source={require("../assets/ChatsProfile.png")}
+                                source={{uri:user.profile_pic_url}}
                             />
                             <View style={{ marginLeft: 5 }}>
-                                <Text style={{ fontSize: 13, color: '#FFFFFF', fontWeight: 'bold' }}>Joe Adam</Text>
+                                <Text style={{ fontSize: 13, color: '#FFFFFF', fontWeight: 'bold' }}>{user?.name}</Text>
                                 <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 5 }}>
                                     <View style={{ width: 7, height: 7, backgroundColor: '#FFFFFF', borderRadius: 3.5 }}></View>
                                     <Text style={{ marginLeft: 3, color: '#FFFFFF', fontSize: 5 }}>Online</Text>
@@ -227,26 +227,53 @@ const ProfileDetails = (props) => {
                         style={styles.textInputContainer}>
                         <CalenderIcon />
 
-                        <Text style={{ color: '#BFBFBF', fontFamily: 'PRe', fontSize: 12, marginLeft: 10 }}>{user.dob ? user.dob : dob}</Text>
+                        <Text style={{ color: '#BFBFBF', fontFamily: 'PRe', fontSize: 12, marginLeft: 10 }}>{dob?dob :user?.dob  }</Text>
 
                     </TouchableOpacity>
 
-                    <Modal
-                        isVisible={show}
-                        onBackdropPress={() => { setShow(false) }}
-                    >
-                        <View style={{ backgroundColor: 'white', borderRadius: 12, }}>
-                            <DatePicker
-                                onValueChange={(i) => { setDob(i) }}
-                            />
+                    {
+                        show && Platform.OS == 'android' &&
 
-                        </View>
-                        <TouchableOpacity
-                            onPress={() => setShow(false)}
-                            style={{ width: 314, height: 54, borderRadius: 9, marginTop: 20, alignSelf: 'center', justifyContent: 'center', alignItems: 'center', backgroundColor: '#A047C8' }}>
-                            <Text style={{ fontFamily: 'PMe', fontSize: 18, color: '#FFFFFF' }}>Done</Text>
-                        </TouchableOpacity>
-                    </Modal>
+                        <DatePicker
+                            // style={{}}
+                            onValueChange={(i) => {
+                                setDob(i.toString())
+                                Platform.OS == "android" && setShow(false)
+
+                            }}
+                        />
+                    }
+                    {
+                        Platform.OS == 'ios' &&
+
+                        <Modal
+                            isVisible={show}
+                            onBackdropPress={() => { setShow(false) }}
+                        >
+                            <View>
+                                <View style={{ backgroundColor: 'white', borderRadius: 12, height: 250 }}>
+
+                                    <DatePicker
+                                        // style={{}}
+                                        onValueChange={(i) => {
+                                            setDob(i.toString())
+                                            Platform.OS == "android" && setShow(false)
+
+                                        }}
+                                    />
+
+                                </View>
+
+                                <TouchableOpacity
+                                    onPress={() => setShow(false)}
+                                    style={{ width: 314, height: 54, borderRadius: 9, marginTop: 20, alignSelf: 'center', justifyContent: 'center', alignItems: 'center', backgroundColor: '#A047C8' }}>
+                                    <Text style={{ fontFamily: 'PMe', fontSize: 18, color: '#FFFFFF' }}>Done</Text>
+                                </TouchableOpacity>
+
+
+                            </View>
+                        </Modal>
+                    }
 
 
                     <View style={styles.textInputContainer}>

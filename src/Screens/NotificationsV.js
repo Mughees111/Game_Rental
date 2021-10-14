@@ -48,6 +48,10 @@ const NotificationsV = (props) => {
                             x.alertWithType("error", "Error", "Internet Error");
                         }
                     })
+                    .catch(err=>{
+                        setLoading(false)
+                        console.log(err)
+                    })
             })
     }
 

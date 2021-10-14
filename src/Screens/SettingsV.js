@@ -3,7 +3,8 @@ import { Text, View, ImageBackground, TouchableOpacity, StyleSheet, FlatList, Im
 import Header from '../Components/Header'
 import { ArrowBack } from '../Components/SvgIcons'
 import { StatusBar } from 'expo-status-bar';
-
+import { storeItem } from '../utils/functions'
+import { changeLoggedInVendor } from '../../Common';
 
 const SettingsV = (props) => {
 
@@ -32,7 +33,9 @@ const SettingsV = (props) => {
                         >
                             <Text style={[styles.text, { marginTop: 40 }]}>Support</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity>
+                        <TouchableOpacity
+                            onPress={()=>props.navigation.navigate('ContactUs')}
+                        >
                             <Text style={styles.text}>Contact Us</Text>
                         </TouchableOpacity>
                         <TouchableOpacity>
@@ -64,7 +67,7 @@ const SettingsV = (props) => {
 
                                 })
                             }}
-                               
+
                         >
                             <Text style={styles.text}>Change Password</Text>
                         </TouchableOpacity>
@@ -108,13 +111,20 @@ const SettingsV = (props) => {
 
 
             </ImageBackground>
-            <TouchableOpacity
+            {/* <TouchableOpacity
                 onPress={() => {
-                    props.navigation.navigate('OnBoardingNavigator')
+
+                    storeItem("login_data_vendor", "")
+                    changeLoggedInVendor.changeNow(2)
+                    // navigation.navigate('OnBoardingNavigator2')
+                    // setDrawer(false)
+
+
+                    // props.navigation.navigate('OnBoardingNavigator')
                 }}
                 style={{ width: "75%", alignSelf: 'center', backgroundColor: '#A047C8', justifyContent: 'center', alignItems: 'center', position: 'absolute', bottom: 100, height: 54, borderRadius: 9 }}>
-                <Text style={{ fontSize: 18, fontFamily: 'PMe', color: '#FFFFFF' }}>Logout</Text>
-            </TouchableOpacity>
+                <Text style={{ fontSize: 18, fontFamily: 'PMe', color: '#FFFFFF' }} ut</Text>
+            </TouchableOpacity> */}
 
         </View>
     )

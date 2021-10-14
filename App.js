@@ -20,7 +20,7 @@ import GameTags from './src/Screens/GameTags';
 import { AccountIcon, ChatBtmIcon, CreateNewPostIcon, HomeIcon } from './src/Components/SvgIcons';
 import Home from './src/Screens/Home';
 import PostDetailPage from './src/Screens/PostDetailPage';
-import Chats from './src/Screens/Chats';
+import VendorChat from './src/Screens/VendorChat';
 import ChatDetails from './src/Screens/ChatDetails';
 import NewPost from './src/Screens/NewPost';
 import Seller from './src/Screens/Seller';
@@ -56,10 +56,26 @@ import UserChat from './src/Screens/UserChat';
 import SettingsV from './src/Screens/SettingsV';
 import ProfileDetailsV from './src/Screens/ProfileDetailsV';
 import NotificationsV from './src/Screens/NotificationsV';
+import SearchedItem from './src/Screens/SearchedItem';
+import VendorChatDetails from './src/Screens/VendorChatDetails';
+import OnBoardingV from './src/Screens/OnBoardingV';
+import ProfileV from './src/Screens/VProfile';
+import RentalHistory from './src/Screens/RentalHistory';
+import OrderHistory from './src/Screens/OrderHistory';
+import ContactUs from './src/Screens/ContactUs';
 
 
 
-export default function App() {
+const useForceUpdate = () => {
+  const [, updateState] = React.useState();
+  return React.useCallback(() => updateState({}), []);
+}
+
+
+export default function App(props) {
+
+
+  const forceUpdate = useForceUpdate();
 
   const [users, setUsers] = useState(0)
   const [as, setAS] = useState('')
@@ -70,7 +86,7 @@ export default function App() {
   const [loggedInVendor, setLoggedInVendor] = useState(0)
 
 
-  const [loaded] = useFonts({
+  var [loaded] = useFonts({
     LBl: require("./assets/fonts/Lato/Lato-Black.ttf"),
     LBI: require("./assets/fonts/Lato/Lato-BlackItalic.ttf"),
     LBo: require("./assets/fonts/Lato/Lato-Bold.ttf"),
@@ -96,9 +112,7 @@ export default function App() {
 
   })
 
-
-  useEffect(() => {
-
+  function checkLogin() {
     console.log("ever came here")
     checkLoggedIn()
     checkLoggedInVendor()
@@ -113,9 +127,19 @@ export default function App() {
     })
     selectionObservable.subscribe((v) => {
       setIsVendor(v)
-    });
+      console.log('v = ' + v)
 
+    });
+  }
+
+
+  useEffect(() => {
+    checkLogin()
   }, []);
+
+
+
+
 
   const checkLoggedIn = () => {
     retrieveItem("login_data").then((data) => {
@@ -126,8 +150,10 @@ export default function App() {
       else {
         setLoggedIn(2)
       }
+      forceUpdate();
     })
   }
+
   const checkLoggedInVendor = () => {
     retrieveItem("login_data_vendor").then((data) => {
       if (data) {
@@ -138,40 +164,44 @@ export default function App() {
         setLoggedInVendor(2)
 
       }
+      forceUpdate();
     })
   }
 
   const checkWithServer = (data) => {
     if (data) var token = data.token;
     else var token = "khali";
-      var body_data = { token: token };
-      doConsole(" I request @ " + urls.API + "check_login");
-      doConsole(body_data);
-      fetch(urls.API + 'check_login', {
-        method: 'POST',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(body_data),
-      })
-        .then((response) => response.json())
-        .then((responseJson) => {
-          doConsole(" I receive ");
-          doConsole(responseJson);
-          if (responseJson.action == "success") {
-            storeItem("login_data", responseJson.data).then(() => {
-              setLoggedIn(1)
-            });
-          }
-          else {
-            setLoggedIn(2)
-          }
-
-        }).catch((error) => {
+    var body_data = { token: token };
+    doConsole(" I request @ " + urls.API + "check_login");
+    doConsole(body_data);
+    fetch(urls.API + 'check_login', {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(body_data),
+    })
+      .then((response) => response.json())
+      .then((responseJson) => {
+        doConsole(" I receive ");
+        doConsole(responseJson);
+        if (responseJson.action == "success") {
+          storeItem("login_data", responseJson.data).then(() => {
+            setLoggedIn(1)
+            forceUpdate()
+          });
+        }
+        else {
           setLoggedIn(2)
-        });
-    
+          forceUpdate()
+        }
+
+      }).catch((error) => {
+        setLoggedIn(2)
+        forceUpdate()
+      });
+
   }
 
   const checkWithServerVendor = (data) => {
@@ -197,17 +227,21 @@ export default function App() {
           storeItem("login_data", responseJson.data).then(() => {
             setLoggedInVendor(1)
           });
+          forceUpdate()
         }
         else {
           setLoggedInVendor(2)
+          forceUpdate()
         }
       }).catch((error) => {
         setLoggedInVendor(2)
+        forceUpdate()
       });
   }
 
 
   if (loggedIn == 0 || loggedInVendor == 0 || !loaded) {
+
     return (
       <View style={{
         flex: 1,
@@ -227,6 +261,7 @@ export default function App() {
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Screen name="Home" component={Home} />
         <Stack.Screen name="PostDetailPage" component={PostDetailPage} />
+        <Stack.Screen name="SearchedItem" component={SearchedItem} />
       </Stack.Navigator>
     )
   }
@@ -255,8 +290,9 @@ export default function App() {
   function ChatStackNavigator() {
     return (
       <Stack.Navigator screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="Chats" component={Chats} />
-        <Stack.Screen name="ChatDetails" component={ChatDetails} />
+        <Stack.Screen name="VendorChat" component={VendorChat} />
+
+        <Stack.Screen name="VendorChatDetails" component={VendorChatDetails} />
       </Stack.Navigator>
     )
   }
@@ -273,7 +309,7 @@ export default function App() {
         <Stack.Screen name="Interests" component={Interests} />
         <Stack.Screen name="TitleYouOwn" component={TitleYouOwn} />
         <Stack.Screen name="SystemOwns" component={SystemOwns} />
-        {/* <Stack.Screen name="GameTags" component={GameTags} /> */}
+        <Stack.Screen name="GameTags" component={GameTags} />
       </Stack.Navigator>
     )
   }
@@ -284,6 +320,7 @@ export default function App() {
         screenOptions={{ headerShown: false }}
       >
 
+        <Stack.Screen name="OnBoardingV" component={OnBoardingV} />
         <Stack.Screen name="SignInV" component={SignInV} />
 
         <Stack.Screen name="CreateAccountV" component={CreateAccountV} />
@@ -294,6 +331,7 @@ export default function App() {
   function SellerNavigator() {
     return (
       <Stack.Navigator screenOptions={{ headerShown: false }} >
+        <Stack.Screen name="ProfileV" component={ProfileV} />
         <Stack.Screen name="Seller" component={Seller} />
         <Stack.Screen name="SellerGr" component={SellerGr} />
         <Stack.Screen name="ViewAllV" component={ViewAllV} />
@@ -485,7 +523,7 @@ export default function App() {
           <Stack.Screen options={{ headerShown: false }} name="Selection" component={Selection} />
         </Stack.Navigator>
       }
-      { 
+      {
         isVendor == 1 && // yes vendor
         <Stack.Navigator initialRouteName="OnBoardingNavigatorV">
 
@@ -502,6 +540,9 @@ export default function App() {
           <Stack.Screen options={{ headerShown: false }} name="Support" component={Support} />
           <Stack.Screen options={{ headerShown: false }} name="PrivacyPolicy" component={PrivacyPolicy} />
           <Stack.Screen options={{ headerShown: false }} name="TandCond" component={TandCond} />
+          <Stack.Screen options={{ headerShown: false }} name="RentalHistory" component={RentalHistory} />
+          <Stack.Screen options={{ headerShown: false }} name="ContactUs" component={ContactUs} />
+
         </Stack.Navigator>
       }
       {
@@ -515,6 +556,7 @@ export default function App() {
           {
             loggedIn == 2 &&
             <Stack.Screen options={{ headerShown: false }} name="OnBoardingNavigator" component={OnBoardingNavigator} />
+            // <Stack.Screen options={{ headerShown: false }} name="Address1" component={Address1} />
 
           }
           <Stack.Screen options={{ headerShown: false }} name="UserNoti" component={UserNoti} />
@@ -522,6 +564,9 @@ export default function App() {
           <Stack.Screen options={{ headerShown: false }} name="Support" component={Support} />
           <Stack.Screen options={{ headerShown: false }} name="PrivacyPolicy" component={PrivacyPolicy} />
           <Stack.Screen options={{ headerShown: false }} name="TandCond" component={TandCond} />
+          <Stack.Screen options={{ headerShown: false }} name="OrderHistory" component={OrderHistory} />
+          <Stack.Screen options={{ headerShown: false }} name="ContactUs" component={ContactUs} />
+          
 
         </Stack.Navigator>
       }

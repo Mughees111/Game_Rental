@@ -6,7 +6,7 @@ import { changeSelection } from '../../Common'
 import { Phone, EmailIcon, GoogleIcon, FaceBookIcon, ArrowBack } from '../Components/SvgIcons'
 
 
-const OnBoardfing = (props) => {
+const OnBoardingV = (props) => {
 
     return (
         <View style={{ flex: 1, backgroundColor: '#111111', }}>
@@ -43,19 +43,19 @@ const OnBoardfing = (props) => {
                     dummy text ever since the 1500s, when an
                     of Lorem Ipsum.
                 </Text> */}
-                <Text style={{ fontFamily: 'PSBo', fontSize: 35, color: '#FFFFFF', marginLeft: 35, marginTop: 25, lineHeight: 40 }}>Play Games{"\n"}in an Eazy Way!</Text>
+                <Text style={{ fontFamily: 'PSBo', fontSize: 32, color: '#FFFFFF', marginLeft: 35, marginTop: 25, lineHeight: 42 }}>Make Money off your Gaming Collection</Text>
                 <TouchableOpacity
                     onPress={() => {
-                        props.navigation.navigate('CreateAccount')
+                        props.navigation.navigate('CreateAccountV')
                     }}
-                    style={{ flexDirection: 'row', width: "85%", alignSelf: "center", height: 47, marginTop: 10, backgroundColor: '#FFFFFF', justifyContent: 'center', alignItems: 'center', borderRadius: 29 }}>
+                    style={{ flexDirection: 'row', width: "85%", alignSelf: "center", height: 47, marginTop: 25, backgroundColor: '#FFFFFF', justifyContent: 'center', alignItems: 'center', borderRadius: 29 }}>
                     {/* <Phone /> */}
                     <Text style={{ color: '#8D8D8D', fontFamily: 'LR', fontSize: 15, marginLeft: 10 }}>Sign up</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity
                     onPress={() => {
-                        props.navigation.navigate('SignIn')
+                        props.navigation.navigate('SignInV')
                     }}
                     style={{ flexDirection: 'row', width: "85%", alignSelf: "center", height: 47, marginTop: 15, backgroundColor: '#1757C6', justifyContent: 'center', alignItems: 'center', borderRadius: 29 }}>
                     {/* <EmailIcon /> */}
@@ -78,4 +78,4 @@ const OnBoardfing = (props) => {
     )
 }
 
-export default OnBoardfing
+export default OnBoardingV

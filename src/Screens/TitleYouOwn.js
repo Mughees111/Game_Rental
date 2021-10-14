@@ -259,10 +259,10 @@ const TitlesYouOwn = (props) => {
                 style={{ flex: 1 }}
             >
 
-                <Text style={{ fontFamily: 'PBo', fontSize: 24, color: '#FFFFFF', marginTop: Platform.OS == 'ios' ? 30 : 27, alignSelf: 'flex-end', width: "30%", }}>LOGO</Text>
+                <Text style={{ fontFamily: 'PBo', fontSize: 24, color: '#FFFFFF', marginTop: Platform.OS == 'ios' ? 30 : 27, alignSelf: 'flex-end', width: "30%", }}> </Text>
                 <View style={{ flexDirection: 'row', marginTop: 50 }}>
-                    <View style={{ width: 223 - 53, height: 39, borderWidth: 1, borderLeftWidth: 0, marginLeft: -5, borderColor: '#FFFFFF', borderRadius: 9, justifyContent: 'center', alignItems: 'center' }}>
-                        <Text style={{ fontSize: 18, fontFamily: 'PMe', color: '#FFFFFF' }}>Games</Text>
+                    <View style={{ width: 223 - 43, height: 39, borderWidth: 1, borderLeftWidth: 0, marginLeft: -5, borderColor: '#FFFFFF', borderRadius: 9, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 18, fontFamily: 'PMe', color: '#FFFFFF' }}>Games I Like</Text>
                     </View>
                     <Text style={{ color: '#818181', alignSelf: 'flex-end', marginLeft: 10, fontFamily: 'PLi', fontSize: 14 }}>Select at least 3</Text>
                 </View>

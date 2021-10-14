@@ -44,24 +44,7 @@ const SellerGr = (props) => {
 
     ]
 
-    const recommendedData = [
-        {
-            name: " Asad Sultan",
-            gameName: "Game Name",
-            image: require("../assets/img7.png")
-        },
-        {
-            name: " Asad Sultan",
-            gameName: "Game Name",
-            image: require("../assets/img8.png")
-        },
-        {
-            name: " Asad Sultan",
-            gameName: "Game Name",
-            image: require("../assets/img6.png")
-        },
-
-    ]
+    
    
     const renderItems = useCallback(({ item, index }) => {
         return (

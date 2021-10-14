@@ -4,7 +4,6 @@ import { Text, View, ImageBackground, TouchableOpacity, StyleSheet, FlatList, Im
 import Header from '../Components/Header'
 import { RattingStarIcon, HeartWhiteIcon, XBoxIcon, KMLocationIcon, PickupIcon, PDPChatIcon, SearchIcon, DrawerIcon, ChatLargeIcon } from '../Components/SvgIcons'
 import { Drawer } from './Drawer'
-import { UserDrawer } from './UserDrawer'
 
 
 import { doConsole, retrieveItem, storeItem, validateEmail } from "./../utils/functions";
@@ -15,7 +14,7 @@ import Loader from '../utils/Loader';
 
 var dropDownAlertRef;
 
-const UserChat = (props) => {
+const VendorChat = (props) => {
 
     const [chatBg, setChatBg] = useState(false)
     const [loading, setLoading] = useState(false);
@@ -25,7 +24,7 @@ const UserChat = (props) => {
 
     useEffect(() => {
 
-        retrieveItem("login_data").then((data) => {
+        retrieveItem("login_data_vendor").then((data) => {
             setUser(data)
 
             const reqObj = {
@@ -33,7 +32,7 @@ const UserChat = (props) => {
             }
             console.log(reqObj)
             setLoading(true)
-            apiRequest(reqObj, "get_chats", false)
+            apiRequest(reqObj, "get_chats", true)
                 .then(data => {
                     console.log('data is')
                     console.log(data)
@@ -66,17 +65,15 @@ const UserChat = (props) => {
                     item.selected = true
                     setChatBg(!chatBg)
                     console.log(item)
-                    props.navigation.navigate('ChatDetails', {
+                    props.navigation.navigate('VendorChatDetails', {
                         user_id: item.user.id,
                         convo_id: item.id,
                         name: item.user.name,
                         picUrl: item.user.profile_pic
                     })
                 }}
-                style={{  width: "100%", height: 58.67, marginTop: 20 }}>
-                <View 
-                // style={[!item.selected ? styles.chatSelected : styles.chatUnselected]}>
-                style={[ styles.chatUnselected ]}>
+                style={{ flexDirection: 'row', width: "100%", height: 58.67, marginTop: 20 }}>
+                <View style={[!item.selected ? styles.chatSelected : styles.chatUnselected]}>
                     <Text style={{ marginLeft: 40, fontFamily: 'PRe', fontSize: 18, color: '#FFFFFF' }}>{item.user.name}</Text>
                     <Text style={{ marginLeft: 40, fontFamily: 'PRe', fontSize: 8, color: '#FFFFFF' }}>{item.last_msg.ago}</Text>
                 </View>
@@ -107,7 +104,7 @@ const UserChat = (props) => {
                         <StatusBar
                             hidden={true}
                         />
-                        <UserDrawer />
+                        <Drawer />
                         <View style={{ flexDirection: 'row' }}>
                             <ChatLargeIcon />
                             <Text style={{ fontFamily: 'PBo', fontSize: 24, color: '#FFFFFF', marginTop: -5, marginLeft: 5 }}>Chats</Text>
@@ -152,25 +149,22 @@ const UserChat = (props) => {
 const styles = StyleSheet.create({
     chatSelected: {
         width: '90%',
-        // marginLeft: 30,
+        marginLeft: 30,
         justifyContent: 'center',
-        alignSelf:'center',
         height: "100%",
         borderRadius: 9,
         backgroundColor: '#000000'
     },
     chatUnselected: {
         width: '90%',
-        // marginLeft: 30,
-        alignSelf:'center',
+        marginLeft: 30,
         justifyContent: 'center',
         height: "100%",
         borderRadius: 9,
-        // backgroundColor: '#A047C8'
-        backgroundColor : 'rgba(0,0,0,0.2)'
+        backgroundColor: '#A047C8'
     }
 })
-export default UserChat
+export default VendorChat
 
 
 

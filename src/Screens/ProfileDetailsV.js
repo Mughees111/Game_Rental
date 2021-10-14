@@ -29,7 +29,7 @@ const ProfileDetailsV = (props) => {
     const forceUpdate = useForceUpdate()
 
 
-    const [dob, setDob] = useState('Dob')
+    const [dob, setDob] = useState('Date of birth')
     const [userName, setUserName] = useState('')
     const [phn, setPhone] = useState('');
 
@@ -82,7 +82,7 @@ const ProfileDetailsV = (props) => {
     function validate() {
         var x = dropDownAlertRef
 
-        if (!user.dob && user.name == userName &&  user.phone == phn) {
+        if (!user.dob && user.name == userName && user.phone == phn) {
             x.alertWithType("error", "Error", "No Changes occured");
             return
         }
@@ -106,12 +106,15 @@ const ProfileDetailsV = (props) => {
 
 
     useEffect(() => {
-        
+
         retrieveItem("login_data_vendor")
             .then((d) => {
                 console.log(d)
                 setUser(d)
-                setDob(d.dob);
+                if (d.dob) {
+                    setDob(d.dob);
+                }
+
                 setUserName(d.name)
                 setPhone(d.phone)
                 forceUpdate();
@@ -157,10 +160,10 @@ const ProfileDetailsV = (props) => {
                         <View style={{ flexDirection: 'row' }}>
                             <Image
                                 style={{ width: 44.16, height: 43.37, borderRadius: 22 }}
-                                source={require("../assets/ChatsProfile.png")}
+                                source={{ uri: user?.profile_pic_url }}
                             />
                             <View style={{ marginLeft: 5 }}>
-                                <Text style={{ fontSize: 13, color: '#FFFFFF', fontWeight: 'bold' }}>Joe Adam</Text>
+                                <Text style={{ fontSize: 13, color: '#FFFFFF', fontWeight: 'bold' }}>{userName && userName}</Text>
                                 <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 5 }}>
                                     <View style={{ width: 7, height: 7, backgroundColor: '#FFFFFF', borderRadius: 3.5 }}></View>
                                     <Text style={{ marginLeft: 3, color: '#FFFFFF', fontSize: 5 }}>Online</Text>
@@ -220,31 +223,16 @@ const ProfileDetailsV = (props) => {
                         style={styles.textInputContainer}>
                         <CalenderIcon />
 
-                        <Text style={{ color: '#BFBFBF', fontFamily: 'PRe', fontSize: 12, marginLeft: 10 }}>{user.dob ? user.dob : dob}</Text>
+                        <Text style={{ color: '#BFBFBF', fontFamily: 'PRe', fontSize: 12, marginLeft: 10 }}>{dob ? dob : user?.dob}</Text>
 
                     </TouchableOpacity>
 
-                    <Modal
-                        isVisible={show}
-                        onBackdropPress={() => { setShow(false) }}
-                    >
-                        <View style={{ backgroundColor: 'white', borderRadius: 12, }}>
-                            <DatePicker
-                                onValueChange={(i) => { setDob(i) }}
-                            />
-
-                        </View>
-                        <TouchableOpacity
-                            onPress={() => setShow(false)}
-                            style={{ width: 314, height: 54, borderRadius: 9, marginTop: 20, alignSelf: 'center', justifyContent: 'center', alignItems: 'center', backgroundColor: '#A047C8' }}>
-                            <Text style={{ fontFamily: 'PMe', fontSize: 18, color: '#FFFFFF' }}>Done</Text>
-                        </TouchableOpacity>
-                    </Modal>
 
 
-                   
 
-                   
+
+
+
 
                     <TouchableOpacity
                         onPress={() => validate()}
@@ -252,13 +240,54 @@ const ProfileDetailsV = (props) => {
                         <Text style={{ fontFamily: 'PMe', fontSize: 18, color: '#FFFFFF' }}>Save Changes</Text>
                     </TouchableOpacity>
 
+                    {
+                        show && Platform.OS == 'android' &&
+
+                        <DatePicker
+                            // style={{}}
+                            onValueChange={(i) => {
+                                setDob(i.toString())
+                                Platform.OS == "android" && setShow(false)
+
+                            }}
+                        />
+                    }
+                    {
+                        Platform.OS == 'ios' &&
+
+                        <Modal
+                            isVisible={show}
+                            onBackdropPress={() => { setShow(false) }}
+                        >
+                            <View>
+                                <View style={{ backgroundColor: 'white', borderRadius: 12, height: 250 }}>
+
+                                    <DatePicker
+                                        // style={{}}
+                                        onValueChange={(i) => {
+                                            setDob(i.toString())
+                                            Platform.OS == "android" && setShow(false)
+
+                                        }}
+                                    />
+
+                                </View>
+
+                                <TouchableOpacity
+                                    onPress={() => setShow(false)}
+                                    style={{ width: 314, height: 54, borderRadius: 9, marginTop: 20, alignSelf: 'center', justifyContent: 'center', alignItems: 'center', backgroundColor: '#A047C8' }}>
+                                    <Text style={{ fontFamily: 'PMe', fontSize: 18, color: '#FFFFFF' }}>Done</Text>
+                                </TouchableOpacity>
 
 
+                            </View>
+                        </Modal>
+                    }
                 </View>
 
-            </ImageBackground>
+            </ImageBackground >
 
-        </View>
+        </View >
     )
 }
 

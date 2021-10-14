@@ -1,4 +1,6 @@
-import { RattingStarIcon, HeartWhiteIcon, XBoxIcon, KMLocationIcon, PickupIcon, PDPChatIcon, SearchIcon, DrawerIcon, ChatLargeIcon, ArrowBack, ShareIcon, ArrowRight } from '../Components/SvgIcons'
+
+
+
 import React, { useCallback, useEffect, useState } from 'react';
 import {
     StyleSheet,
@@ -44,7 +46,7 @@ import { urls } from "./../utils/Api_urls";
 import { Entypo } from '@expo/vector-icons';
 
 import { Bubble, Composer, GiftedChat, InputToolbar, Send, Time } from 'react-native-gifted-chat'
-import { ArrowBack as BackButton } from '../Components/SvgIcons';
+import { ArrowBack,ArrowRight  } from '../Components/SvgIcons';
 
 
 let alertRef;
@@ -69,7 +71,7 @@ const filters = [
     "Media",
     "People"
 ]
-const ChatDetails = (props) => {
+const VendorChatDetails = (props) => {
 
     let carousell;
     console.log('params are')
@@ -106,7 +108,7 @@ const ChatDetails = (props) => {
 
     useFocusEffect(React.useCallback(() => {
 
-        retrieveItem("login_data").then((data) => {
+        retrieveItem("login_data_vendor").then((data) => {
             setUser(data)
         })
 
@@ -145,7 +147,7 @@ const ChatDetails = (props) => {
         console.log(dbData)
         console.log("@get_msgs");
         // const { isError, data } = await doPost(dbData, "get_msgs");
-        apiRequest(dbData, "get_msgs", false)
+        apiRequest(dbData, "get_msgs", true)
             .then(data => {
                 console.log('data is')
                 console.log(data)
@@ -174,7 +176,6 @@ const ChatDetails = (props) => {
                 }
             })
             .catch(err => {
-                setLoading(false)
                 console.log('console 4')
                 Alert.alert('Internet Error')
             })
@@ -200,7 +201,7 @@ const ChatDetails = (props) => {
         console.log(dbData)
         setSending(true);
         setLoading(false)
-        const { isError, data } = await doPost(dbData, "send_msg");
+        const { isError, data } = await doPost(dbData, "send_msg",true);
         console.log(isError);
         console.log(data);
         setSending(false)
@@ -291,14 +292,14 @@ const ChatDetails = (props) => {
                             <></>
                         );
                     }}
-                    renderInputToolbar={() => {
-                        return <View style={{ backgroundColor: 'red', width: "100%" }}>
+                    // renderInputToolbar={() => {
+                    //     return <View style={{ backgroundColor: 'red', width: "100%" }}>
 
-                        </View>
+                    //     </View>
 
 
 
-                    }}
+                    // }}
                     renderSend={(props) => {
                         return (
                             <Send
@@ -448,4 +449,4 @@ const styles = StyleSheet.create({
 });
 
 
-export default ChatDetails
+export default VendorChatDetails

@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react'
-import { Text, View, ImageBackground, TouchableOpacity, StyleSheet, FlatList, Image, Dimensions, TextInput,ScrollView } from 'react-native'
+import { Text, View, ImageBackground, TouchableOpacity, StyleSheet, FlatList, Image, Dimensions, TextInput, ScrollView } from 'react-native'
 import Header from '../Components/Header'
 import { FilterIcon, SearchIcon, RattingStarIcon, TruckIcon, AFilterIcon } from '../Components/SvgIcons'
 import Modal from 'react-native-modal';
@@ -8,7 +8,7 @@ import Picker from '../Components/Picker';
 
 
 
-import { apiRequest } from '../utils/apiCalls'
+import { apiRequest, doPost } from '../utils/apiCalls'
 import { doConsole, retrieveItem, storeItem } from "../utils/functions";
 import { urls } from "./../utils/Api_urls";
 import DropdownAlert from "react-native-dropdownalert";
@@ -40,54 +40,107 @@ const Home = (props) => {
     const [user, setUser] = useState({})
     const [notif_token, setNotif_token] = useState('')
 
+    const { width, height } = Dimensions.get('window')
+    const [filterModal, setFilterModal] = useState(false)
+    const [searchBarPosition, setSearchBarPosition] = useState()
+    const [yOffset, setYOffset] = useState(height);
+    const [searchView, setSearchView] = useState(false)
+    const [searchItem, setSearchItem] = useState('')
+    const [searchPosts, setSearchPosts] = useState([])
+
+    const keyExtractor = useCallback((item, index) => index.toString(), []);
+
     useFocusEffect(React.useCallback(() => {
-        retrieveItem("login_data").then((data)=>{
+        retrieveItem("login_data").then((data) => {
             setUser(data)
-           
+
         })
     }, []))
 
-    useEffect(()=>{
-        if(user && user?.token!=undefined)
-        {
+    useEffect(() => {
+
+        retrieveItem("login_data")
+            .then((d) => {
+                console.log('user')
+                console.log(d)
+                setUser(d)
+            })
+
+    }, [])
+
+    useEffect(() => {
+        if (user && user?.token != undefined) {
             getData();
             askNotificationPermission()
         }
-    },[user])
+    }, [user])
 
     const askNotificationPermission = async () => {
         console.log("asking");
-        const { status: existingStatus } = await  Notifications.getPermissionsAsync()
+        const { status: existingStatus } = await Notifications.getPermissionsAsync()
         let finalStatus = existingStatus;
-    
-    
+
+
         if (finalStatus !== 'granted') {
             const { status } = await Notifications.requestPermissionsAsync();
             finalStatus = status;
         }
         if (finalStatus == 'granted') {
-            try{
-            let token = await Notifications.getExpoPushTokenAsync();
-            setNotif_token(token.data)
-            store_location_on_server(token.data)
-            } catch(error)
-            {
-              alert(error);
+            try {
+                let token = await Notifications.getExpoPushTokenAsync();
+                setNotif_token(token.data)
+                store_location_on_server(token.data)
+            } catch (error) {
+                //   alert(error);
             }
         }
     }
 
-    const store_location_on_server= async (localToken)=>{
-        const dbData = {token:user?.token ?? "", notif_key:localToken};
-        const {isError, data}=await doPost(dbData,"do_store_notifiation_key");
+    const store_location_on_server = async (localToken) => {
+        const dbData = { token: user?.token ?? "", notif_key: localToken };
+        const { isError, data } = await doPost(dbData, "do_store_notifiation_key");
         console.log(isError);
         console.log(data);
     }
 
 
-    
 
-    
+
+    function doSearch() {
+
+        var x = dropDownAlertRef;
+        const dbData = {
+            token: user.token,
+            search: searchItem
+        }
+        setLoading(true)
+        let url = urls.API + 'search_posts';
+        console.log(url)
+
+
+        apiRequest(dbData, 'search_posts', false)
+            .then(data => {
+                setLoading(false)
+                console.log(data)
+                if (data.action == 'success') {
+
+                    if (data.posts.length) {
+                        navigation.navigate('SearchedItem', {
+                            searchedData: data.posts,
+                            searchItem
+                        })
+                    }
+                    else {
+                        x.alertWithType("custom", "No matches found", "");
+
+                    }
+                    // setSearchPosts(data.posts)
+                }
+            })
+            .catch(err => {
+                console.log(err)
+            })
+    }
 
     function getData() {
         var x = dropDownAlertRef;
@@ -95,9 +148,9 @@ const Home = (props) => {
         setLoading(true)
         retrieveItem("login_data")
             .then((d) => {
-                console.log('user')
-                console.log(d)
-                setUser(d)
+                // console.log('user')
+                // console.log(d)
+                // setUser(d)
                 const dbData = { token: d.token }
                 apiRequest(dbData, 'get_posts', false)
                     .then(data => {
@@ -125,12 +178,9 @@ const Home = (props) => {
     }
 
 
-    const { width, height } = Dimensions.get('window')
-    const [filterModal, setFilterModal] = useState(false)
-    const [searchBarPosition, setSearchBarPosition] = useState()
-    const [yOffset, setYOffset] = useState(height);
-    const [searchView, setSearchView] = useState(false)
-    const keyExtractor = useCallback((item, index) => index.toString(), []);
+
+
+
 
 
 
@@ -147,13 +197,14 @@ const Home = (props) => {
         return (
             <TouchableOpacity
                 onPress={() => {
-                    props.navigation.navigate('PostDetailPage', {params: item ,gameRenter:true})
+                    // console.log(item)
+                    props.navigation.navigate('PostDetailPage', { params: item, gameRenter: true })
                 }}
                 style={{ marginLeft: 15 }}>
                 <ImageBackground
                     source={{ uri: item.images[0] }}
                     style={{ width: 128, height: 161 }}
-                    imageStyle={{borderRadius:14}}
+                    imageStyle={{ borderRadius: 14 }}
                 >
                     <Image
                         style={{ position: 'absolute', bottom: 0, width: "100%", resizeMode: "cover", height: 160, borderRadius: 15, overflow: "hidden" }}
@@ -163,7 +214,7 @@ const Home = (props) => {
 
                         <View style={{ position: 'absolute', bottom: 10, alignSelf: 'center' }}>
                             <Text style={{ color: "#FFFFFF", fontSize: "LR", fontSize: 8, alignSelf: 'center' }}>{item.game_title}</Text>
-                            <Text style={{ color: "#FFFFFF", fontSize: "LBo", fontSize: 13, marginBottom: 15 }}>{item.title}</Text>
+                            <Text style={{ color: "#FFFFFF", fontSize: "LBo", fontSize: 13, marginBottom: 15 }}>{item.title} </Text>
 
                         </View>
                         <View style={{ flexDirection: 'row', marginLeft: -3, alignItems: 'center' }}>
@@ -190,7 +241,7 @@ const Home = (props) => {
         return (
             <TouchableOpacity
                 onPress={() => {
-                    props.navigation.navigate('PostDetailPage', { params:item,gameRenter:true })
+                    props.navigation.navigate('PostDetailPage', { params: item, gameRenter: true })
                 }}
                 style={{ marginTop: 15 }}
             >
@@ -277,7 +328,7 @@ const Home = (props) => {
                         </TouchableOpacity>
                     </View>
 
-                   
+
 
                     <Text style={{ fontFamily: 'LBo', fontSize: 18, color: "#FFFFFF", lineHeight: 22, marginTop: 15 }}>System</Text>
                     <View style={{ flexDirection: 'row', marginLeft: -10 }}>
@@ -318,6 +369,8 @@ const Home = (props) => {
 
 
 
+
+
     return (
         <View style={{ flex: 1, backgroundColor: '#A047C8' }}>
 
@@ -329,7 +382,7 @@ const Home = (props) => {
                 source={require("../assets/HomeBGImage.png")}
                 style={{ width: "100%", height: 265, flex: 1 }}
             >
-                
+
                 {searchView ? <View style={{ position: 'absolute', bottom: 0, height: "90%", width: "100%", backgroundColor: '#161527', borderRadius: 43 }}></View> : null}
                 {!searchView ? <View style={{ position: 'absolute', bottom: 0, height: "82%", width: "100%", backgroundColor: '#161527', borderRadius: 43 }}></View> : null}
                 <View style={{ width: "80%", alignSelf: 'center' }}>
@@ -339,19 +392,34 @@ const Home = (props) => {
                         ref={view => setSearchBarPosition(view)}
                         style={styles.searchBar}
                     >
-                        <SearchIcon />
-                        <Text style={{ fontFamily: 'LR', fontSize: 14, color: '#FFFFFF', marginLeft: 15 }}>Search Games You Love</Text>
+
+                        <TextInput
+                            placeholder="Search Games You Love"
+                            style={{ fontFamily: 'LR', fontSize: 14, color: '#FFFFFF', marginLeft: 10, width: "100%", height: "100%" }}
+                            placeholderTextColor="#fff"
+                            onChangeText={setSearchItem}
+                            onSubmitEditing={() => {
+                                if (searchItem!='') {
+                                    doSearch()
+                                }
+
+                            }}
+                        />
                         <TouchableOpacity
                             onPress={() => {
-                                setFilterModal(!filterModal)
-                                searchBarPosition.measure((fx, fy, width, heightt, px, py) => {
-                                    // const filterModalHeight = height-py-60
-                                    const filterModalHeight = py + 30
-                                    setYOffset(filterModalHeight)
-                                })
+                                if (searchItem!='') {
+                                    doSearch()
+                                }
+                                // setFilterModal(!filterModal)
+                                // searchBarPosition.measure((fx, fy, width, heightt, px, py) => {
+                                //     // const filterModalHeight = height-py-60
+                                //     const filterModalHeight = py + 30
+                                //     setYOffset(filterModalHeight)
+                                // })
                             }}
                             style={filterModal ? styles.activeFilterIcon : styles.inActiveFilterIcon}>
-                            {filterModal ? <AFilterIcon /> : <FilterIcon />}
+                            <SearchIcon />
+                            {/* {filterModal ? <AFilterIcon /> : <FilterIcon />} */}
                         </TouchableOpacity>
                     </TouchableOpacity>
                 </View>

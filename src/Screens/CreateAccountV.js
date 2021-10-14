@@ -1,6 +1,6 @@
 import React from 'react'
-import { View, Text, TextInput, StyleSheet, Platform, Image, ImageBackground, TouchableOpacity, Dimensions, ActivityIndicator ,ScrollView} from 'react-native'
-import { CAccountMail, CAccountPassword, CAccountPerson, CAccountPhone, TCContainer, TCTick } from '../Components/SvgIcons'
+import { View, Text, TextInput, StyleSheet, Platform, Image, ImageBackground, TouchableOpacity, Dimensions, ActivityIndicator, ScrollView } from 'react-native'
+import { ArrowBack, CAccountMail, CAccountPassword, CAccountPerson, CAccountPhone, TCContainer, TCTick } from '../Components/SvgIcons'
 import { LinearGradient } from 'expo-linear-gradient';
 import { StatusBar } from 'expo-status-bar';
 
@@ -70,10 +70,10 @@ const CreateAccountV = (props) => {
 
 
     const goSignup = () => {
-        
+
         setLoading(true)
         var token = "khali";
-        var body_data = { email, name: username, phone,password };
+        var body_data = { email, name: username, phone, password };
         doConsole(" I request @ " + urls.API_VENDOR + "signup");
         doConsole(body_data);
         fetch(urls.API_VENDOR + 'signup', {
@@ -136,12 +136,22 @@ const CreateAccountV = (props) => {
                 style={{ flex: 1 }}
             >
                 <View style={{ marginLeft: 10, width: "80%", alignSelf: 'center', flex: 1 }}>
-                    <Text style={{ fontFamily: 'PBo', fontSize: 24, color: '#FFFFFF', marginTop: Platform.OS == 'ios' ? 30 : 27, alignSelf: 'flex-end' }}>LOGO</Text>
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: Platform.OS == 'ios' ? 30 : 27, }}>
+                        <TouchableOpacity
+                            onPress={() => {
+                                props.navigation.goBack()
+                                // changeSelection.changeNow(0)
+                            }}
+                        >
+                            <ArrowBack />
+                        </TouchableOpacity>
+                        <Text style={{ fontFamily: 'PBo', fontSize: 24, color: '#FFFFFF', }}> </Text>
+                    </View>
                     <Text style={{ marginTop: 98, fontFamily: 'PSBo', fontSize: 24, color: '#FFFFFF' }}>Create Account</Text>
 
 
 
-                    <ScrollView contentContainerStyle={{paddingBottom:120}} >
+                    <ScrollView contentContainerStyle={{ paddingBottom: 120 }} >
                         <View style={styles.textInputContainer}>
                             <CAccountPerson />
                             <TextInput
@@ -225,11 +235,18 @@ const CreateAccountV = (props) => {
                             </View>
                             <View style={{ flexDirection: 'row', marginLeft: 20 }}>
                                 <Text style={{ color: '#878787', fontFamily: 'PRe', fontSize: 12 }}>I agree to the</Text>
-                                <TouchableOpacity>
+                                <TouchableOpacity
+                                    onPress={() => {
+
+                                        props.navigation.navigate('TandCond')
+                                    }}
+                                >
                                     <Text style={{ color: '#A047C8', fontFamily: 'PMe', fontSize: 12 }}> Terms & Conditions</Text>
                                 </TouchableOpacity>
                                 <Text style={{ color: '#878787', fontFamily: 'PRe', fontSize: 12, textAlign: 'left' }}> and</Text>
-                                <TouchableOpacity style={{ position: 'absolute', left: 0 }}>
+                                <TouchableOpacity
+                                    onPress={() => props.navigation.navigate('PrivacyPolicy')}
+                                    style={{ position: 'absolute', left: 0 }}>
                                     <Text style={{ color: '#A047C8', fontFamily: 'PMe', fontSize: 12, }}>{"\n"}Privacy Policy.</Text>
                                 </TouchableOpacity>
                             </View>

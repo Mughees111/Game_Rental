@@ -3,13 +3,13 @@ import { View, Text, TextInput, StyleSheet, Platform, Image, ImageBackground, To
 
 import { LinearGradient } from 'expo-linear-gradient';
 import { StatusBar } from 'expo-status-bar';
-import { CAccountMail, CAccountPassword } from '../Components/SvgIcons';
+import { ArrowBack, CAccountMail, CAccountPassword } from '../Components/SvgIcons';
 
 
 
-import { doConsole, retrieveItem, storeItem,validateEmail } from "./../utils/functions";
+import { doConsole, retrieveItem, storeItem, validateEmail } from "./../utils/functions";
 import { urls } from "./../utils/Api_urls";
-import { changeLoggedIn, changeLoggedInVendor } from "../../Common";
+import { changeLoggedIn, changeLoggedInVendor, changeSelection } from "../../Common";
 
 
 import DropdownAlert from "react-native-dropdownalert";
@@ -21,39 +21,37 @@ var alertRef;
 const SignInV = (props) => {
 
 
-  const navigation = useNavigation()
+    const navigation = useNavigation()
 
-  const [loading, setLoading] = useState(false)
-  const [langg, setLangg] = useState(false)
-  const [langtext, setLangtext] = useState(false)
-  const [email, setEmail] = useState('')
-//   faisal@gmail.com
-  const [password, setPassword] = useState('')
-//   12345678
+    const [loading, setLoading] = useState(false)
+    const [langg, setLangg] = useState(false)
+    const [langtext, setLangtext] = useState(false)
+    const [email, setEmail] = useState('')
+    //   faisal@gmail.com
+    const [password, setPassword] = useState('')
+    //   12345678
 
 
-  const doSignup = ()=>{
-    if(!validateEmail(email))
-    {
-      alertRef.alertWithType("error","Error","Please enter your valid email");
-      return;
+    const doSignup = () => {
+        if (!validateEmail(email)) {
+            alertRef.alertWithType("error", "Error", "Please enter your valid email");
+            return;
+        }
+
+
+        if (password.length < 6) {
+            alertRef.alertWithType("error", "Error", "Please enter at least 6 characters as password");
+            return;
+        }
+        goSignup()
     }
 
 
-    if(password.length<6)
-    {
-      alertRef.alertWithType("error","Error","Please enter at least 6 characters as password");
-      return;
-    }
-    goSignup()
-  }
-
-
-  const goSignup = ()=>{
-    setLoading(true)
+    const goSignup = () => {
+        setLoading(true)
         var token = "khali";
-        var body_data = {email,password};
-        doConsole(" I request @ "+ urls.API_VENDOR+"login");
+        var body_data = { email, password };
+        doConsole(" I request @ " + urls.API_VENDOR + "login");
         doConsole(body_data);
         fetch(urls.API_VENDOR + 'login', {
             method: 'POST',
@@ -63,33 +61,33 @@ const SignInV = (props) => {
             },
             body: JSON.stringify(body_data)
         })
-        .then((response) => response.json())
-        .then((responseJson) => {
-            doConsole(" I receive ");
-            doConsole(responseJson);
-            if (responseJson.action == "success") {
-                storeItem("login_data_vendor", responseJson.data).then(() => {
+            .then((response) => response.json())
+            .then((responseJson) => {
+                doConsole(" I receive ");
+                doConsole(responseJson);
+                if (responseJson.action == "success") {
+                    storeItem("login_data_vendor", responseJson.data).then(() => {
+                        setLoading(false)
+                        changeLoggedInVendor.changeNow(1)
+                    });
+                }
+                else {
                     setLoading(false)
-                    changeLoggedInVendor.changeNow(1)
-                });
-            }
-            else {
+                    alertRef.alertWithType("error", "Error", responseJson.error)
+                }
+            }).catch((error) => {
+                console.log(error)
                 setLoading(false)
-                alertRef.alertWithType("error","Error",responseJson.error)
-            }
-        }).catch((error) => {
-            console.log(error)
-            setLoading(false)
-            alertRef.alertWithType("error","Error","Internet error")
-        });
-  }
+                alertRef.alertWithType("error", "Error", "Internet error")
+            });
+    }
 
-  const doGuest = ()=>{
-    setLoading(true)
-        
+    const doGuest = () => {
+        setLoading(true)
+
         var token = "khali";
-        var body_data = {email,password};
-        doConsole(" I request @ "+urls.API+"do_guest");
+        var body_data = { email, password };
+        doConsole(" I request @ " + urls.API + "do_guest");
         doConsole(body_data);
         fetch(urls.API + 'do_guest', {
             method: 'POST',
@@ -99,46 +97,46 @@ const SignInV = (props) => {
             },
             body: JSON.stringify(body_data),
         }).then((response) => response.json())
-        .then((responseJson) => {
-            doConsole(" I receive ");
-            doConsole(responseJson);
-            if (responseJson.action == "success") {
-                storeItem("login_data_vendor", responseJson.data).then(() => {
-                  setLoading(false)
-                 console.log("helloololololo");
-                //   if(responseJson.data.step==1)
-                //   {
-                //       navigation.navigate("Address1")
-                //   }
-                //   else if(responseJson.data.step==2)
-                //   {
-                //       navigation.navigate("Interests")
-                //   }
-                //   else if(responseJson.data.step==3)
-                //   {
-                //       navigation.navigate("TitleYouOwn")
-                //   }
-                //   else if(responseJson.data.step==4)
-                //   {
-                //       navigation.navigate("SystemOwns")
-                //   }
-                //   else{
-                //     changeLoggedIn.changeNow(1)
-                //   }
+            .then((responseJson) => {
+                doConsole(" I receive ");
+                doConsole(responseJson);
+                if (responseJson.action == "success") {
+                    storeItem("login_data_vendor", responseJson.data).then(() => {
+                        setLoading(false)
+                        console.log("helloololololo");
+                        //   if(responseJson.data.step==1)
+                        //   {
+                        //       navigation.navigate("Address1")
+                        //   }
+                        //   else if(responseJson.data.step==2)
+                        //   {
+                        //       navigation.navigate("Interests")
+                        //   }
+                        //   else if(responseJson.data.step==3)
+                        //   {
+                        //       navigation.navigate("TitleYouOwn")
+                        //   }
+                        //   else if(responseJson.data.step==4)
+                        //   {
+                        //       navigation.navigate("SystemOwns")
+                        //   }
+                        //   else{
+                        //     changeLoggedIn.changeNow(1)
+                        //   }
 
-                changeLoggedInVendor.changeNow(1)
-                    
-                });
-            }
-            else {
+                        changeLoggedInVendor.changeNow(1)
+
+                    });
+                }
+                else {
+                    setLoading(false)
+                    alertRef.alertWithType("error", "Error", responseJson.error)
+                }
+            }).catch((error) => {
                 setLoading(false)
-                alertRef.alertWithType("error","Error",responseJson.error)
-            }
-        }).catch((error) => {
-            setLoading(false)
-            alertRef.alertWithType("error","Error","Internet error")
-        });
-  }
+                alertRef.alertWithType("error", "Error", "Internet error")
+            });
+    }
 
 
     return (
@@ -146,18 +144,30 @@ const SignInV = (props) => {
             <StatusBar
                 hidden={true}
             />
+
             <View style={{ zIndex: 1 }}>
-              <DropdownAlert ref={ref => alertRef = ref} />
+                <DropdownAlert ref={ref => alertRef = ref} />
             </View>
             <LinearGradient
                 // Background Linear Gradient
                 colors={['#0D0D0D', '#17162B']}
                 style={{ flex: 1 }}
             >
+
                 <View style={{ marginLeft: 10, width: "80%", alignSelf: 'center', flex: 1 }}>
-                    <Text style={{ fontFamily: 'PBo', fontSize: 24, color: '#FFFFFF', marginTop: Platform.OS == 'ios' ? 30 : 27, alignSelf: 'flex-end' }}>LOGO</Text>
-                    <Text style={{fontFamily:'PSBo',fontSize:24,color:'#FFFFFF',marginTop:130}}>Sign InV</Text>
-                    
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between',alignItems:'center' ,marginTop: Platform.OS == 'ios' ? 30 : 27,}}>
+                        <TouchableOpacity
+                        onPress={()=>{
+                            props.navigation.goBack()
+                            // changeSelection.changeNow(0)
+                        }}
+                        >
+                            <ArrowBack />
+                        </TouchableOpacity>
+                        <Text style={{ fontFamily: 'PBo', fontSize: 24, color: '#FFFFFF',  }} ></Text>
+                    </View>
+                    <Text style={{ fontFamily: 'PSBo', fontSize: 24, color: '#FFFFFF', marginTop: 130 }}>Sign In</Text>
+
                     <View style={[styles.textInputContainer]}>
                         <CAccountMail />
                         <TextInput
@@ -186,30 +196,30 @@ const SignInV = (props) => {
                             }}
                         />
                     </View>
-                    <TouchableOpacity style={{marginTop:5}} onPress={()=>{
+                    <TouchableOpacity style={{ marginTop: 5 }} onPress={() => {
                         alert("this will work on your server only")
                     }}>
-                        <Text style={{fontSize:12,fontFamily:"PMe",color:'#A047C8',alignSelf:'flex-end'}}>Forgot Password?</Text>
-                    </TouchableOpacity>
-                    
-                    <TouchableOpacity 
-                         onPress={()=>{
-                            // props.navigation.navigate('OTP')
-                            if(!loading) doSignup()
-                        }}
-                    style={{borderWidth:1,borderColor:'#FFFFFF',width:314,height:54,borderRadius:9,marginTop:40,justifyContent:'center',alignItems:'center',flexDirection:"row"}}>
-                        <Text style={{fontFamily:'PMe',fontSize:18,color:'#FFFFFF'}}>Sign In</Text>{loading && <ActivityIndicator color={"#fff"} size={"small"} />}
+                        <Text style={{ fontSize: 12, fontFamily: "PMe", color: '#A047C8', alignSelf: 'flex-end' }}>Forgot Password?</Text>
                     </TouchableOpacity>
 
-                    <TouchableOpacity style={{marginTop:15}} onPress={()=>{
+                    <TouchableOpacity
+                        onPress={() => {
+                            // props.navigation.navigate('OTP')
+                            if (!loading) doSignup()
+                        }}
+                        style={{ borderWidth: 1, borderColor: '#FFFFFF', width: 314, height: 54, borderRadius: 9, marginTop: 40, justifyContent: 'center', alignItems: 'center', flexDirection: "row" }}>
+                        <Text style={{ fontFamily: 'PMe', fontSize: 18, color: '#FFFFFF' }}>Sign In</Text>{loading && <ActivityIndicator color={"#fff"} size={"small"} />}
+                    </TouchableOpacity>
+
+                    <TouchableOpacity style={{ marginTop: 15 }} onPress={() => {
                         navigation.navigate("CreateAccountV")
                     }}>
-                        <Text style={{fontSize:12,fontFamily:"PMe",color:'#A047C8',alignSelf:"center"}}>Create Account</Text>
+                        <Text style={{ fontSize: 12, fontFamily: "PMe", color: '#A047C8', alignSelf: "center" }}>Create Account</Text>
                     </TouchableOpacity>
 
 
                 </View>
-                
+
             </LinearGradient>
         </View>
     )

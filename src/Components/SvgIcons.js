@@ -1,6 +1,6 @@
 import React from 'react';
 import { View } from 'react-native';
-import Svg, { G, Path, Defs, ClipPath ,Text,TSpan} from 'react-native-svg';
+import Svg, { G, Path, Defs, ClipPath, Text, TSpan } from 'react-native-svg';
 
 
 
@@ -17,7 +17,7 @@ export function Phone(props) {
         <Path
           data-name="Path 2141"
           d="M17.128 12.223a10.573 10.573 0 01-3.32-.529 1.518 1.518 0 00-1.476.311l-2.094 1.581a11.572 11.572 0 01-5.2-5.2l1.531-2.041a1.505 1.505 0 00.37-1.525 10.589 10.589 0 01-.531-3.326A1.5 1.5 0 004.914 0h-3.42A1.5 1.5 0 000 1.494a17.147 17.147 0 0017.128 17.128 1.5 1.5 0 001.494-1.494v-3.41a1.5 1.5 0 00-1.494-1.495z"
-          fill="#00e88b"
+          fill={props.color ? props.color : "#00e88b"}
         />
       </G>
     </Svg>
@@ -794,7 +794,7 @@ export function ArrowBack(props) {
           data-name="Path 730"
           d="M18.922 39.061a1.439 1.439 0 00-.249-.018H4.47l.31-.144a2.881 2.881 0 00.814-.576l3.982-3.983a1.491 1.491 0 00.209-1.909 1.44 1.44 0 00-2.161-.187l-7.2 7.2a1.44 1.44 0 000 2.037l7.2 7.2a1.44 1.44 0 002.161-.144 1.491 1.491 0 00-.209-1.909L5.6 42.644a2.881 2.881 0 00-.72-.526l-.432-.194h14.145a1.491 1.491 0 001.52-1.21 1.44 1.44 0 00-1.191-1.653z"
           transform="translate(0 -31.842)"
-          fill="#fff"
+          fill={props.color ? props.color : "#fff"}
         />
       </G>
     </Svg>
@@ -1091,7 +1091,7 @@ export function SubscriptionIcon(props) {
   )
 }
 
-export function FavoriteIcon (props) {
+export function FavoriteIcon(props) {
   return (
     <Svg width={18.111} height={16} viewBox="0 0 18.111 16" {...props}>
       <G data-name={535285}>
@@ -1126,3 +1126,62 @@ export function SettingsIcon(props) {
   )
 }
 
+
+
+export function FbIcon(props) {
+  return (
+    <Svg
+      xmlns="http://www.w3.org/2000/svg"
+      width={17.582}
+      height={35.165}
+      viewBox="0 0 17.582 35.165"
+      {...props}
+    >
+      <G data-name={733605}>
+        <G data-name="Group 877">
+          <Path
+            data-name="Path 2212"
+            d="M138.989 12.088v-4.4a2.2 2.2 0 012.2-2.2h2.2V0h-4.4a6.593 6.593 0 00-6.589 6.593v5.494H128v5.494h4.4v17.584h6.593V17.582h4.4l2.2-5.494z"
+            transform="translate(-128) translate(128) translate(-128)"
+            fill="#00b1ff"
+          />
+        </G>
+      </G>
+    </Svg>
+  )
+}
+
+
+export function LocationIcon(props) {
+  return (
+    <Svg
+      data-name={446075}
+      xmlns="http://www.w3.org/2000/svg"
+      width={12.601}
+      height={17.396}
+      viewBox="0 0 12.601 17.396"
+      {...props}
+    >
+      <G data-name="Group 783">
+        <G data-name="Group 782">
+          <Path
+            data-name="Path 2155"
+            d="M76.873 0a6.307 6.307 0 00-6.3 6.3c0 4.311 5.638 10.641 5.878 10.908a.568.568 0 00.844 0c.24-.267 5.878-6.6 5.878-10.908a6.307 6.307 0 00-6.3-6.3zm0 15.96c-1.9-2.254-5.166-6.7-5.166-9.66a5.166 5.166 0 1110.331 0c.001 2.959-3.267 7.405-5.165 9.66z"
+            transform="translate(-70.573)"
+            fill="#fff"
+          />
+        </G>
+      </G>
+      <G data-name="Group 785">
+        <G data-name="Group 784">
+          <Path
+            data-name="Path 2156"
+            d="M165.878 92.134a3.17 3.17 0 103.17 3.17 3.173 3.173 0 00-3.17-3.17zm0 5.205a2.035 2.035 0 112.035-2.035 2.038 2.038 0 01-2.035 2.035z"
+            transform="translate(3.13 3.13) translate(-162.708 -92.134)"
+            fill="#fff"
+          />
+        </G>
+      </G>
+    </Svg>
+  )
+}

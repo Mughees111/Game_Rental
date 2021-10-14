@@ -1,7 +1,7 @@
 import { useFocusEffect, useNavigation } from '@react-navigation/native'
 import { StatusBar } from 'expo-status-bar'
-import React, { useCallback, useState } from 'react'
-import { Text, View, ImageBackground, TouchableOpacity, StyleSheet, FlatList, Image, Dimensions, TextInput, Platform, ScrollView,Alert } from 'react-native'
+import React, { useCallback, useRef, useState } from 'react'
+import { Text, View, ImageBackground, TouchableOpacity, SafeAreaView, StyleSheet, FlatList, Image, Dimensions, TextInput, Platform, ScrollView, Alert } from 'react-native'
 import Header from '../Components/Header'
 import { SendMsg, RecieveMsg } from '../Components/Msg'
 import { RattingStarIcon, HeartWhiteIcon, XBoxIcon, KMLocationIcon, PickupIcon, PDPChatIcon, SearchIcon, DrawerIcon, ChatLargeIcon, ArrowBack, ShareIcon, ArrowRight, PickupLargeIcon, DeliveryLargeIcon } from '../Components/SvgIcons'
@@ -14,11 +14,29 @@ import * as ImagePicker from 'expo-image-picker';
 import { useEffect } from 'react'
 import PrivacyPicker from '../Components/PrivacyPicker';
 import { urls } from '../utils/Api_urls';
+import MapView, { Marker, Polyline, PROVIDER_GOOGLE } from 'react-native-maps';
+import ReactNativeModal from 'react-native-modal'
+import * as Location from 'expo-location';
+import { GooglePlacesAutocomplete } from "fiction-places-autocomplete";
+
+
 
 var dropDownAlertRef;
 
+const { width: viewportWidth, height: viewportHeight } = Dimensions.get('window');
+
+const useForceUpdate = () => {
+  const [, updateState] = React.useState();
+  return React.useCallback(() => updateState({}), []);
+}
+
+
+
 const NewPost = (props) => {
 
+  const forceUpdate = useForceUpdate();
+
+  var map = useRef(null)
   const navigation = useNavigation()
   const [loading, setLoading] = useState(false)
 
@@ -39,8 +57,28 @@ const NewPost = (props) => {
   const [gamesList, setGamesList] = useState([]);
   const [interestList, setInterestList] = useState([]);
   const [systemList, setSystemList] = useState([]);
-
+  const [GOOGLE_MAPS, setGOOGLE_MAPS] = useState('AIzaSyBCcRdOVZFoGUabErTjle8HTXP0R5arBuw')
   const [user, setUser] = React.useState({})
+  const [region, setRegion] = useState({
+    latitude: 0,
+    longitude: 0,
+  });
+  const [selectPickepLocation, setSelectPickepLocation] = useState(false)
+  const [initialRegion, setInitialRegion] = useState({
+    latitude: 0,
+    longitude: 0,
+    latitudeDelta: 0,
+    longitudeDelta: 0,
+    locationTitle: ''
+  });
+  const [userSelectedLocation, setUserSelectedLocation] = useState({
+    latitude: 0,
+    longitude: 0,
+    latitudeDelta: 0,
+    longitudeDelta: 0,
+    locationTitle: ''
+  });
+
 
 
   useFocusEffect(React.useCallback(() => {
@@ -104,16 +142,40 @@ const NewPost = (props) => {
 
   function postAd() {
 
-    const postDataObj = {
-      token: user.token,
-      title,
-      photos: imagesArrayFile,
-      system_id: selectedSystem,
-      game_id: games,
-      interest_id: interest,
-      condition,
-      is_pickup: pickup
+    var postDataObj;
+
+    if (pickup == '1') {
+      postDataObj = {
+        token: user.token,
+        title,
+        photos: imagesArrayFile,
+        system_id: selectedSystem,
+        game_id: games,
+        interest_id: interest,
+        condition,
+        is_pickup: pickup,
+        address_text: userSelectedLocation.locationTitle,
+        lat: userSelectedLocation.latitude,
+        lng: userSelectedLocation.longitude
+      }
     }
+
+    else {
+      postDataObj = {
+        token: user.token,
+        title,
+        photos: imagesArrayFile,
+        system_id: selectedSystem,
+        game_id: games,
+        interest_id: interest,
+        condition,
+        is_pickup: pickup,
+        address_text: userSelectedLocation.locationTitle,
+        lat: userSelectedLocation.latitude,
+        lng: userSelectedLocation.longitude
+      }
+    }
+
     console.log(postDataObj)
     apiRequest(postDataObj, 'add_post', true)
       .then(data => {
@@ -131,7 +193,6 @@ const NewPost = (props) => {
             console.log(data);
             dropDownAlertRef.alertWithType("error", "Error", "Error");
           }
-
         }
         else {
           setLoading(false)
@@ -147,21 +208,21 @@ const NewPost = (props) => {
       return
     }
     if (imagesArray.length < 1) {
-      dropDownAlertRef.alertWithType("error", "Error", "Please post at least 1 photo");
+      dropDownAlertRef.alertWithType("error", "Error", "Please upload at least 1 photo");
       return
     }
     if (selectedSystem.length < 1) {
       dropDownAlertRef.alertWithType("error", "Error", "Please select system ");
       return
     }
-    if (games.length < 1) {
-      dropDownAlertRef.alertWithType("error", "Error", "Please select game");
-      return
-    }
-    if (interest.length < 1) {
-      dropDownAlertRef.alertWithType("error", "Error", "Please select interest");
-      return
-    }
+    // if (games.length < 1) {
+    //   dropDownAlertRef.alertWithType("error", "Error", "Please select game");
+    //   return
+    // }
+    // if (interest.length < 1) {
+    //   dropDownAlertRef.alertWithType("error", "Error", "Please select category");
+    //   return
+    // }
     if (condition.length < 1) {
       dropDownAlertRef.alertWithType("error", "Error", "Please select condition");
       return
@@ -170,11 +231,134 @@ const NewPost = (props) => {
     postAd();
   }
 
-  // useEffect(() => {
-  //   if (user && user?.token) {
-  //     // getOffers()
-  //   }
-  // }, [user])
+
+  async function handleUserLocation() {
+    let { status } = await Location.requestForegroundPermissionsAsync();
+    if (status !== 'granted') {
+      Alert.alert('Permission to access location was denied');
+      return;
+    }
+
+    let locationn = await Location.getCurrentPositionAsync({});
+    const oneDegreeOfLongitudeInMeters = 111.32 * 1000;
+    const circumference = (40075 / 360) * 1000;
+    const latDelta = locationn.coords.accuracy * (1 / (Math.cos(locationn.coords.latitude) * circumference));
+    const lonDelta = (locationn.coords.accuracy / oneDegreeOfLongitudeInMeters);
+
+    var r = locationn.coords
+
+    var pkey = GOOGLE_MAPS;
+    var url = "https://maps.googleapis.com/maps/api/geocode/json?latlng=" + r.latitude + "," + r.longitude + "&key=" + pkey;
+    console.log(url);
+    setLoading(true)
+    fetch(url, {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify([]),
+    }).then((response) => response.json())
+      .then((responseJson) => {
+        setLoading(false)
+        // console.log("I get:");
+        // console.log(responseJson.status);
+        if (responseJson.status == "OK") {
+
+          console.log(responseJson.results[0].formatted_address);
+
+          var address = responseJson.results[0].formatted_address;
+
+          setUserSelectedLocation({
+            ...userSelectedLocation,
+            latitude: locationn.coords.latitude,
+            longitude: locationn.coords.longitude,
+            latitudeDelta: Math.max(0, latDelta),
+            longitudeDelta: Math.max(0, lonDelta),
+            locationTitle: address
+          })
+        }
+
+      })
+      .catch((error) => {
+        setLoading(false)
+        setTimeout(() => {
+          dropDownAlertRef.alertWithType('error', 'error', "Network Request Failed, Please check your internet connect and try again");
+          //   alert(error);
+        }, 500);
+
+      });
+
+
+    setInitialRegion({
+      ...initialRegion,
+      latitude: locationn.coords.latitude,
+      longitude: locationn.coords.longitude,
+      latitudeDelta: Math.max(0, latDelta),
+      longitudeDelta: Math.max(0, lonDelta)
+    })
+    forceUpdate();
+    setSelectPickepLocation(true)
+  }
+
+
+
+
+  useEffect(() => {
+    handleUserLocation()
+  }, [])
+
+
+  function getLocationTitle(r) {
+
+    // map.cureent.animateToRegion(
+    //   setUserSelectedLocation({
+    //     ...userSelectedLocation,
+    //     latitude: r.latitude,
+    //     longitude: r.longitude
+    //   })
+    // )
+    var pkey = GOOGLE_MAPS;
+    var url = "https://maps.googleapis.com/maps/api/geocode/json?latlng=" + r.latitude + "," + r.longitude + "&key=" + pkey;
+    console.log(url);
+    fetch(url, {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify([]),
+    }).then((response) => response.json())
+      .then((responseJson) => {
+        // console.log("I get:");
+        // console.log(responseJson.status);
+        if (responseJson.status == "OK") {
+
+          console.log(responseJson.results[0].formatted_address);
+
+          var address = responseJson.results[0].formatted_address;
+
+
+          setUserSelectedLocation({
+            ...userSelectedLocation,
+            locationTitle: address,
+            longitude: r.longitude,
+            latitude: r.latitude
+          })
+        }
+
+      })
+      .catch((error) => {
+        setLoading(false)
+        setTimeout(() => {
+          dropDownAlertRef.alertWithType('error', 'error', "Network Request Failed, Please check your internet connect and try again");
+          //   alert(error);
+        }, 500);
+
+      });
+
+  }
+
 
 
   const addOffer = async () => {
@@ -206,7 +390,7 @@ const NewPost = (props) => {
         dropDownAlertRef.alertWithType("success", "Success", "Profile has been updated successfully");
         setBtn(false)
         storeItem("login_data_vendor", data.data).then(() => {
-          doData()
+          // doData()
         })
       }
       else {
@@ -249,7 +433,7 @@ const NewPost = (props) => {
         aspect: [4, 4],
         base64: false,
       });
-      if (result) {
+      if (result.uri) {
         do_update_dp(result.uri, result, dp_type);
       }
 
@@ -296,6 +480,8 @@ const NewPost = (props) => {
     }
 
   }
+
+
   const do_update_dp = (url, response, type__) => {
 
     setLoading(true)
@@ -373,95 +559,283 @@ const NewPost = (props) => {
       });
   }
 
-
-
-  return (
-    <View style={{ flex: 1, backgroundColor: '#A047C8' }}>
-      <View style={{ zIndex: 1 }}>
-        <DropdownAlert ref={ref => dropDownAlertRef = ref} />
-      </View>
-      {loading && <Loader />}
-      <ImageBackground
-        source={require("../assets/HomeBGImage.png")}
-        style={{ width: "100%", height: 265, flex: 1 }}
+  if (selectPickepLocation == true && pickup == 1) {
+    return (
+      <ReactNativeModal
+        isVisible={selectPickepLocation}
+        style={{ margin: 0, }}
       >
-        <View style={{ width: "80%", alignSelf: 'center' }}>
-          {/* Header */}
+        <View style={{ width: "100%", height: "100%", backgroundColor: 'white' }}>
+          <View style={[{ flex: 1, }]}>
 
-          <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: Platform.OS == 'ios' ? 35 : 25, }}>
-            <StatusBar
-              hidden={true}
-            />
-            <TouchableOpacity
-              onPress={() => {
-                props.navigation.goBack();
-              }}
-              style={{ alignSelf: 'center' }}>
-              <ArrowBack />
-            </TouchableOpacity>
-            <Text style={{ fontFamily: 'PBo', fontSize: 24, color: '#FFFFFF', marginTop: -5, marginLeft: 5 }}>New Post</Text>
+            {
+              selectPickepLocation ?
+
+                <View>
+                  <View style={{
+                    position: "relative", marginTop: 30, borderTopLeftRadius: 10, overflow: "hidden", borderTopRightRadius: 10,
+                  }}>
+                    <MapView
+                      // ref={ref => map = ref}
+
+                      initialRegion={userSelectedLocation}
+                      showsUserLocation={true}
+                      showsMyLocationButton={true}
+                      // onRegionChangeComplete={region => setUserSelectedLocation(region)}
+                      // onRegionChangeComplete={(v) => {
+                      //   getLocationTitle(v)
+                      // }}
+                      region={userSelectedLocation}
+                      provider={PROVIDER_GOOGLE}
+                      style={{ width: '100%', height: '100%' }}
+                    >
+                      <Marker
+                        title="Me" coordinate={userSelectedLocation}
+                        pinColor="#A047C8"
+                      />
+                    </MapView>
+                  </View>
+
+                  <View
+                    style={{ width: viewportWidth, position: 'absolute', top: 30 }}
+                  >
+                    <GooglePlacesAutocomplete
+                      ref={map}
+                      placeholder={'Search'}
+                      minLength={2} // minimum length of text to search
+                      autoFocus={false}
+                      returnKeyType={'search'} // Can be left out for default return key https://facebook.github.io/react-native/docs/textinput.html#returnkeytype
+                      keyboardAppearance={'light'} // Can be left out for default keyboardAppearance https://facebook.github.io/react-native/docs/textinput.html#keyboardappearance
+                      listViewDisplayed={false}    // true/false/undefined
+                      fetchDetails={true}
+                      renderDescription={row => row.description} // custom description render
+
+                      onPress={(data, details) => { // 'details' is provided when fetchDetails = true
+                        // console.log('lat = ' + details.geometry.location.lat);
+                        // console.log(details.geometry.location.lng);
+                        // let region = {
+                        //   latitude: details.geometry.location.lat,
+                        //   longitude: details.geometry.location.lng,
+                        //   latitudeDelta: 0,
+                        //   longitudeDelta: 0
+                        // }
+                        // setRegion(region)
+                        setUserSelectedLocation({
+                          ...userSelectedLocation,
+                          latitude: details.geometry.location.lat,
+                          longitude: details.geometry.location.lng,
+                          locationTitle: data.description
+                        })
+
+                        forceUpdate();
+
+                      }}
+
+
+                      // getDefaultValue={()=>{this.state.searched_location}}
+
+                      query={{
+                        // available options: https://developers.google.com/places/web-service/autocomplete
+                        key: GOOGLE_MAPS,
+                        language: 'en', // language of the results
+                        // types: '(cities)' // default: 'geocode'
+                        components: "country:pk"
+                      }}
+
+                      styles={{
+                        textInputContainer: {
+                          width: viewportWidth * (90 / 100),
+                          alignSelf: "center",
+                          backgroundColor: "#fff",
+                          borderWidth: 1,
+                          borderTopWidth: 1,
+                          zIndex: 22,
+                          borderBottomWidth: 1,
+                          borderBottomColor: "#0E2163",
+                          borderTopColor: "#0E2163",
+                          borderLeftColor: "#0E2163",
+                          borderRightColor: "#0E2163",
+                          marginTop: 25,
+                          borderRadius: 4,
+                        },
+                        row: { paddingLeft: viewportWidth * (5 / 100) },
+                        listView: { backgroundColor: "#fff" },
+                        description: { fontWeight: 'bold' },
+                        predefinedPlacesDescription: { color: '#1faadb' },
+                        container: { width: viewportWidth, alignSelf: "center", zIndex: 55555 }
+                      }}
+                      // currentLocation={true} // Will add a 'Current location' button at the top of the predefined places list
+                      // currentLocationLabel="Current location"
+                      nearbyPlacesAPI='GooglePlacesSearch' // Which API to use: GoogleReverseGeocoding or GooglePlacesSearch
+                      GooglePlacesSearchQuery={{
+                        // available options for GooglePlacesSearch API : https://developers.google.com/places/web-service/search
+                        rankby: 'distance',
+                        type: 'cafe'
+                      }}
+
+
+                      GooglePlacesDetailsQuery={{
+                        // available options for GooglePlacesDetails API : https://developers.google.com/places/web-service/details
+                        fields: ['formatted_address', 'geometry'],
+                      }}
+
+                      // filterReverseGeocodingByTypes={['locality', 'administrative_area_level_3']} // filter the reverse geocoding results by types - ['locality', 'administrative_area_level_3'] if you want to display only cities
+                      // predefinedPlaces={[cancel]}
+
+                      debounce={200} // debounce the requests in ms. Set to 0 to remove debounce. By default 0ms.
+                      renderLeftButton={() => (
+                        <TouchableOpacity
+                          onPress={() => {
+                            setPickup(0)
+                            setSelectPickepLocation(false)
+                          }}
+                          style={{ justifyContent: "center", marginLeft: 15 }}>
+                          <ArrowBack color="black" />
+                        </TouchableOpacity>
+                      )}
+                      renderRightButton={() => null}
+                    />
+                  </View>
+                </View>
+                : null
+            }
+
           </View>
-        </View>
 
 
-      </ImageBackground>
 
+          {/* <MapView
+        // style={styles.map}
+        // showsCompass={true}
+        style={{ flex: 1 }}
+        showsUserLocation={true}
+        showsMyLocationButton={true}
+        initialRegion={initialRegion}
+        onRegionChange={onChangeValue}
+        onRegionChangeComplete={onChangeValue}
+        ref={ref => map = ref}
+      >
+        <Marker
+          title="Me" coordinate={initialRegion}
+        />
+      </MapView> */}
+          {/* <SafeAreaView style={{ position: 'absolute', width: "90%", alignSelf: 'center', top: 0, flexDirection: 'row', justifyContent: 'space-between', }}>
+        <TouchableOpacity
+          onPress={() => {
+            setPickup(0)
+            setSelectPickepLocation(false)
 
-      <View style={{ flex: 1, position: 'absolute', bottom: 0, height: "90%", width: "100%", backgroundColor: '#161527', borderRadius: 43, paddingRight: 20, paddingTop: 30, paddingLeft: 25 }}>
-        <ScrollView
-          contentContainerStyle={{ paddingBottom: 250 }}
-          showsVerticalScrollIndicator={false}
+          }}
         >
-          <Text style={styles.text}>Game Title</Text>
-          <TextInput
-            placeholder="Enter Game Title Here"
-            placeholderTextColor="#D5D5D5"
-            style={styles.textInput}
-            value={title}
-            onChangeText={(t) => setTitle(t)}
-          />
-          {
-            imagesArray.map((item, index) => {
-              return (
-
-                <Image
-                  key={index}
-                  style={{ width: 100, height: 100, borderRadius: 10, marginLeft: 10, marginTop: 15 }}
-                  source={{ uri: item }} />
-
-              )
-            })
-          }
+          <ArrowBack color="black" />
+        </TouchableOpacity>
+        <Text style={{ color: 'black', fontFamily: 'PBo', fontSize: 20 }}>Select Location</Text>
+      </SafeAreaView> */}
           <TouchableOpacity
             onPress={() => {
-              Alert.alert(
-                "Upload Picture",
-                'How do you want to upload picture?',
-
-                [
-                  { text: 'Camera', onPress: () => update_dp_2() },
-
-                  { text: 'Gallery', onPress: () => update_dp() },
-                ],
-                { cancelable: true },
-              );
+              console.log(userSelectedLocation)
+              setSelectPickepLocation(false)
+              // validatePost()
             }}
-            style={{ alignSelf: 'flex-end', justifyContent: 'center', alignItems: 'center', width: 159, height: 40, borderRadius: 9, borderWidth: 1, borderColor: '#FFFFFF', marginTop: 10, backgroundColor: '#000000' }}>
-            <Text style={{ fontFamily: 'PMe', fontSize: 12, color: '#FFFFFF' }}>Upload Photos</Text>
+            style={{ height: 54, width: "40%", alignSelf: 'center', position: 'absolute', bottom: 10, justifyContent: 'center', alignItems: 'center', backgroundColor: "#A047C8", marginTop: 20, borderRadius: 9 }}>
+            <Text style={{ fontFamily: 'PMe', fontSize: 18, color: '#FFFFFF' }}>Done</Text>
           </TouchableOpacity>
+        </View>
 
-          <Text style={[styles.text, { marginTop: 10 }]}>System</Text>
-          <View style={[styles.textInput, { paddingLeft: -0, paddingRight: 5, justifyContent: 'center', }]}>
-            <PrivacyPicker
-              selected={{ title: 'Select' }}
-              data={systemList}
-              onValueChange={(index, title) => {
-                setSelectedSystem(title.id)
-              }}
-            />
+      </ReactNativeModal>
+
+
+    )
+  }
+  else
+    return (
+      <View style={{ flex: 1, backgroundColor: '#A047C8' }}>
+        <View style={{ zIndex: 1 }}>
+          <DropdownAlert ref={ref => dropDownAlertRef = ref} />
+        </View>
+        {loading && <Loader />}
+        <ImageBackground
+          source={require("../assets/HomeBGImage.png")}
+          style={{ width: "100%", height: 265, flex: 1 }}
+        >
+          <View style={{ width: "80%", alignSelf: 'center' }}>
+            {/* Header */}
+
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: Platform.OS == 'ios' ? 35 : 25, }}>
+              <StatusBar
+                hidden={true}
+              />
+              <TouchableOpacity
+                onPress={() => {
+                  props.navigation.goBack();
+                }}
+                style={{ alignSelf: 'center' }}>
+                <ArrowBack />
+              </TouchableOpacity>
+              <Text style={{ fontFamily: 'PBo', fontSize: 24, color: '#FFFFFF', marginTop: -5, marginLeft: 5 }}>New Post</Text>
+            </View>
           </View>
 
-          <Text style={[styles.text, { marginTop: 10 }]}>Game</Text>
+
+        </ImageBackground>
+
+
+        <View style={{ flex: 1, position: 'absolute', bottom: 0, height: "90%", width: "100%", backgroundColor: '#161527', borderRadius: 43, paddingRight: 20, paddingTop: 30, paddingLeft: 25 }}>
+          <ScrollView
+            contentContainerStyle={{ paddingBottom: 250 }}
+            showsVerticalScrollIndicator={false}
+          >
+            <Text style={styles.text}>Game Title</Text>
+            <TextInput
+              placeholder="Enter Game Title Here"
+              placeholderTextColor="#D5D5D5"
+              style={styles.textInput}
+              value={title}
+              onChangeText={(t) => setTitle(t)}
+            />
+            {
+              imagesArray.map((item, index) => {
+                return (
+
+                  <Image
+                    key={index}
+                    style={{ width: 100, height: 100, borderRadius: 10, marginLeft: 10, marginTop: 15 }}
+                    source={{ uri: item }} />
+
+                )
+              })
+            }
+            <TouchableOpacity
+              onPress={() => {
+                update_dp_2();
+                // Alert.alert(
+                //   "Upload Picture",
+                //   'How do you want to upload picture?',
+
+                //   [
+                //     { text: 'Camera', onPress: () => update_dp_2() },
+
+                //     { text: 'Gallery', onPress: () => update_dp() },
+                //   ],
+                //   { cancelable: true },
+                // );
+              }}
+              style={{ alignSelf: 'flex-end', justifyContent: 'center', alignItems: 'center', width: 159, height: 40, borderRadius: 9, borderWidth: 1, borderColor: '#FFFFFF', marginTop: 10, backgroundColor: '#000000' }}>
+              <Text style={{ fontFamily: 'PMe', fontSize: 12, color: '#FFFFFF' }}>Upload Photos</Text>
+            </TouchableOpacity>
+
+            <Text style={[styles.text, { marginTop: 10 }]}>System</Text>
+            <View style={[styles.textInput, { paddingLeft: -0, paddingRight: 5, justifyContent: 'center', }]}>
+              <PrivacyPicker
+                selected={{ title: 'Select' }}
+                data={systemList}
+                onValueChange={(index, title) => {
+                  setSelectedSystem(title.id)
+                }}
+              />
+            </View>
+
+            {/* <Text style={[styles.text, { marginTop: 10 }]}>Game</Text>
           <View style={[styles.textInput, { paddingLeft: -0, paddingRight: 5, justifyContent: 'center', }]}>
             <PrivacyPicker
               selected={{ title: 'Select' }}
@@ -470,76 +844,84 @@ const NewPost = (props) => {
                 setGame(title.id)
               }}
             />
-          </View>
+          </View> */}
 
-          <Text style={[styles.text, { marginTop: 10 }]}>Interest</Text>
-          <View style={[styles.textInput, { paddingLeft: -0, paddingRight: 5, justifyContent: 'center', }]}>
-            <PrivacyPicker
-              selected={{ title: 'Select' }}
-              data={interestList}
-              onValueChange={(index, title) => {
-                setInterest(title.id)
-              }}
-            />
-          </View>
+            <Text style={[styles.text, { marginTop: 10 }]}>Category</Text>
+            <View style={[styles.textInput, { paddingLeft: -0, paddingRight: 5, justifyContent: 'center', }]}>
+              <PrivacyPicker
+                selected={{ title: 'Select' }}
+                data={interestList}
+                onValueChange={(index, title) => {
+                  setInterest(title.id)
+                }}
+              />
+            </View>
 
 
-          <Text style={[styles.text, { marginTop: 10 }]}>Condition</Text>
-          <View style={[styles.textInput, { paddingLeft: -0, paddingRight: 5, justifyContent: 'center', }]}>
-            <PrivacyPicker
-              selected={{ title: 'Select' }}
-              data={getCondition()}
-              onValueChange={(index, title) => {
-                setCondition(title.title)
-              }}
-            />
-          </View>
-          {/* <Text style={[styles.text, { marginTop: 30 }]}>Condition</Text>
+            <Text style={[styles.text, { marginTop: 10 }]}>Condition</Text>
+            <View style={[styles.textInput, { paddingLeft: -0, paddingRight: 5, justifyContent: 'center', }]}>
+              <PrivacyPicker
+                selected={{ title: 'Select' }}
+                data={getCondition()}
+                onValueChange={(index, title) => {
+                  setCondition(title.title)
+                }}
+              />
+            </View>
+            {
+              pickup == '1' &&
+              <>
+                <Text style={[styles.text, { marginTop: 10 }]}>Location</Text>
+                <View style={[styles.textInput, { paddingHorizontal: 5, justifyContent: 'center', }]}>
+                  <Text style={{ fontFamily: 'PMe', fontSize: 12, color: '#FFFFFF' }}>{userSelectedLocation.locationTitle}</Text>
+                </View>
+              </>
+            }
+            {/* <Text style={[styles.text, { marginTop: 30 }]}>Condition</Text>
           <TextInput
             placeholder="Enter Game Title Here"
             placeholderTextColor="#D5D5D5"
             style={styles.textInput}
           /> */}
 
-          <View style={{ flexDirection: 'row', justifyContent: 'space-evenly', marginTop: 20 }}>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-evenly', marginTop: 20 }}>
 
-            <View style={{ alignItems: 'center' }}>
-              <TouchableOpacity
-                onPress={() => setPickup(1)}
-                style={{ width: 65, height: 65, borderRadius: 32.5, backgroundColor: pickup == 1 ? "#A047C8" : '#000000', alignItems: 'center', justifyContent: 'center' }}>
-                <PickupLargeIcon />
-              </TouchableOpacity>
-              <Text style={{ fontFamily: 'PRe', fontSize: 12, color: '#FFFFFF', marginTop: 5 }}>Pickup</Text>
+              <View style={{ alignItems: 'center' }}>
+                <TouchableOpacity
+                  onPress={async () => {
+                    setPickup(1)
+                    setSelectPickepLocation(true)
+
+                  }}
+                  style={{ width: 65, height: 65, borderRadius: 32.5, backgroundColor: pickup == 1 ? "#A047C8" : '#000000', alignItems: 'center', justifyContent: 'center' }}>
+                  <PickupLargeIcon />
+                </TouchableOpacity>
+                <Text style={{ fontFamily: 'PRe', fontSize: 12, color: '#FFFFFF', marginTop: 5 }}>Pickup</Text>
+              </View>
+              <View style={{ alignItems: 'center' }}>
+                <TouchableOpacity
+                  onPress={() => setPickup(0)}
+                  style={{ width: 65, height: 65, borderRadius: 32.5, backgroundColor: pickup == 1 ? "#000000" : '#A047C8', alignItems: 'center', justifyContent: 'center' }}>
+                  <DeliveryLargeIcon />
+                </TouchableOpacity>
+                <Text style={{ fontFamily: 'PRe', fontSize: 12, color: '#FFFFFF', marginTop: 5 }}>Delivery</Text>
+              </View>
             </View>
-            <View style={{ alignItems: 'center' }}>
-              <TouchableOpacity
-                onPress={() => setPickup(0)}
-                style={{ width: 65, height: 65, borderRadius: 32.5, backgroundColor: pickup == 1 ? "#000000" : '#A047C8', alignItems: 'center', justifyContent: 'center' }}>
-                <DeliveryLargeIcon />
-              </TouchableOpacity>
-              <Text style={{ fontFamily: 'PRe', fontSize: 12, color: '#FFFFFF', marginTop: 5 }}>Delivery</Text>
-            </View>
-          </View>
 
-          <Text style={[styles.text, { marginTop: 30 }]}>Location</Text>
-          <Image
-            style={{ width: "100%", borderRadius: 9, marginTop: 10 }}
-            source={require("../assets/Map1.png")}
-          />
-          <TouchableOpacity
-            onPress={() => {
-              validatePost()
-            }}
-            style={{ height: 54, justifyContent: 'center', alignItems: 'center', backgroundColor: "#A047C8", marginTop: 20, borderRadius: 9 }}>
-            <Text style={{ fontFamily: 'PMe', fontSize: 18, color: '#FFFFFF' }}>Send For Approval</Text>
-          </TouchableOpacity>
 
-        </ScrollView>
+
+            <TouchableOpacity
+              onPress={() => {
+                validatePost()
+              }}
+              style={{ height: 54, justifyContent: 'center', alignItems: 'center', backgroundColor: "#A047C8", marginTop: 20, borderRadius: 9 }}>
+              <Text style={{ fontFamily: 'PMe', fontSize: 18, color: '#FFFFFF' }}>Send For Approval</Text>
+            </TouchableOpacity>
+
+          </ScrollView>
+        </View>
       </View>
-
-
-    </View>
-  )
+    )
 }
 
 const styles = StyleSheet.create({
@@ -548,7 +930,13 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: 16, fontFamily: 'PRe', color: '#FFFFFF'
+  },
+  map: {
+    width: "100%",
+    height: "100%",
   }
+
+
 })
 
 export default NewPost

@@ -10,6 +10,7 @@ import { apiRequest } from '../utils/apiCalls'
 import { doConsole, retrieveItem, storeItem } from "../utils/functions";
 import DropdownAlert from "react-native-dropdownalert";
 import Loader from "../utils/Loader";
+import Seller from './Seller';
 
 
 
@@ -22,8 +23,15 @@ const VendorHome = (props) => {
     const [loading, setLoading] = useState(false);
 
     const [livePost, setLivePost] = useState([]);
-    const [pendingPosts, setPendingPosts] = useState([]);
+    const [approvalPosts, setApprovalPosts] = useState([]);
     const [rentedPosts, setRentedPosts] = useState([]);
+    const [userData, setUserData] = useState()
+
+    const [deniedPost, setDeniedPost] = useState([]);
+    const [pendingPosts, setPendingPosts] = useState([]);
+    const [rentedPosts1, setRentedPosts1] = useState([]);
+    const [returnedPosts, setReturnedPosts] = useState([]);
+
 
 
     const navigation = useNavigation()
@@ -33,6 +41,7 @@ const VendorHome = (props) => {
         setLoading(true)
         retrieveItem("login_data_vendor")
             .then((d) => {
+                setUserData(d)
                 const dbData = { token: d.token }
                 apiRequest(dbData, 'get_my_posts', true)
                     .then(data => {
@@ -40,8 +49,40 @@ const VendorHome = (props) => {
                             if (data.action == 'success') {
                                 console.log(data)
                                 setLivePost(data.live_posts);
-                                setPendingPosts(data.pending_posts);
+                                setApprovalPosts(data.pending_posts);
                                 setRentedPosts(data.rented_posts);
+                                setLoading(false)
+                            }
+                            else {
+                                x.alertWithType("error", "Error", "Internet Error");
+                                setLoading(false)
+                            }
+                        }
+                        else {
+                            x.alertWithType("error", "Error", "Internet Error");
+                            setLoading(false)
+                        }
+
+                    })
+            })
+    }
+
+    function get_my_requests() {
+        var x = dropDownAlertRef;
+        setLoading(true)
+        retrieveItem("login_data_vendor")
+            .then((d) => {
+                const dbData = { token: d.token }
+                apiRequest(dbData, 'get_my_requests', true)
+                    .then(data => {
+                        if (data) {
+                            if (data.action == 'success') {
+                                console.log(data)
+                                // setLivePost(data.live_posts);
+                                setPendingPosts(data.pendings);
+                                setRentedPosts1(data.rented);
+                                setDeniedPost(data.denied)
+                                setReturnedPosts(data.returned)
                                 setLoading(false)
                             }
                             else {
@@ -60,130 +101,17 @@ const VendorHome = (props) => {
 
 
 
+
     useFocusEffect(React.useCallback(() => {
         get_my_post();
+        get_my_requests()
     }, []))
 
 
 
     const keyExtractor = useCallback((item, index) => index.toString(), []);
 
-    const renderRentedPosts = useCallback(({ item, index }) => {
-        return (
-            <TouchableOpacity
-                onPress={() => {
-                    // props.navigation.navigate('Chat12')
-                    props.navigation.navigate('PostDetailPage')
-                }}
-                style={{ marginLeft: 15, width: 128, height: 166 }}>
 
-
-                <ImageBackground
-                    source={{ uri: item.images[0] }}
-                    style={{ width: 128, height: 161, overflow: 'hidden' }}
-                >
-
-                    <Image
-                        style={{ position: 'absolute', bottom: 0, overflow: 'hidden' }}
-                        source={require("../assets/Mask1.png")}
-                    />
-
-
-
-                    <View style={{ position: 'absolute', bottom: 20, alignSelf: 'center' }}>
-                        <Text style={{ color: "#FFFFFF", fontSize: "LR", fontSize: 8, alignSelf: 'center' }}>{item.title}</Text>
-                        <Text style={{ color: "#FFFFFF", fontSize: "LBo", fontSize: 13 }}>{item.game_title}</Text>
-                        {/* <Text>Asad Sultan</Text> */}
-
-                    </View>
-                </ImageBackground>
-                <View style={{ position: 'absolute', bottom: 0, alignSelf: 'center', width: 87, height: 18, borderRadius: 6, backgroundColor: '#A047C8', justifyContent: 'center', alignItems: 'center' }}>
-                    <Text style={{ fontFamily: 'LBo', fontSize: 8, color: "white" }}>
-                        {/* 4 Days Left */}
-                        {item.away}</Text>
-                </View>
-            </TouchableOpacity>
-
-        )
-    })
-    const renderLivePosts = useCallback(({ item, index }) => {
-        return (
-            <TouchableOpacity
-                onPress={() => {
-                    // props.navigation.navigate('Chat12')
-                    props.navigation.navigate('PostDetailPage')
-                }}
-                style={{ marginLeft: 15, width: 128, height: 166 }}>
-
-
-                <ImageBackground
-                    source={{ uri: item.images[0] }}
-                    style={{ width: 128, height: 161, overflow: 'hidden' }}
-                >
-
-                    <Image
-                        style={{ position: 'absolute', bottom: 0, overflow: 'hidden' }}
-                        source={require("../assets/Mask1.png")}
-                    />
-
-
-
-                    <View style={{ position: 'absolute', bottom: 20, alignSelf: 'center' }}>
-                        <Text style={{ color: "#FFFFFF", fontSize: "LR", fontSize: 8, alignSelf: 'center' }}>{item.title}</Text>
-                        <Text style={{ color: "#FFFFFF", fontSize: "LBo", fontSize: 13 }}>{item.game_title}</Text>
-                        {/* <Text>Asad Sultan</Text> */}
-
-                    </View>
-                </ImageBackground>
-                <View style={{ position: 'absolute', bottom: 0, alignSelf: 'center', width: 87, height: 18, borderRadius: 6, backgroundColor: '#A047C8', justifyContent: 'center', alignItems: 'center' }}>
-                    <Text style={{ fontFamily: 'LBo', fontSize: 8, color: "white" }}>
-                        {/* 4 Days Left */}
-                        {item.away}</Text>
-                </View>
-            </TouchableOpacity>
-
-        )
-    })
-    const renderPendingPosts = useCallback(({ item, index }) => {
-        return (
-            <TouchableOpacity
-                onPress={() => {
-                    // props.navigation.navigate('Chat12')
-                    props.navigation.navigate('PostDetailPage', {
-                        params: item
-                    })
-                }}
-                style={{ marginLeft: 15, width: 128, height: 166 }}>
-
-
-                <ImageBackground
-                    source={{ uri: item.images[0] }}
-                    style={{ width: 128, height: 161, overflow: 'hidden' }}
-                >
-
-                    <Image
-                        style={{ position: 'absolute', bottom: 0, overflow: 'hidden' }}
-                        source={require("../assets/Mask1.png")}
-                    />
-
-
-
-                    <View style={{ position: 'absolute', bottom: 20, alignSelf: 'center' }}>
-                        <Text style={{ color: "#FFFFFF", fontSize: "LR", fontSize: 8, alignSelf: 'center' }}>{item.title}</Text>
-                        <Text style={{ color: "#FFFFFF", fontSize: "LBo", fontSize: 13 }}>{item.game_title}</Text>
-                        {/* <Text>Asad Sultan</Text> */}
-
-                    </View>
-                </ImageBackground>
-                <View style={{ position: 'absolute', bottom: 0, alignSelf: 'center', width: 87, height: 18, borderRadius: 6, backgroundColor: '#A047C8', justifyContent: 'center', alignItems: 'center' }}>
-                    <Text style={{ fontFamily: 'LBo', fontSize: 8, color: "white" }}>
-                        {/* 4 Days Left */}
-                        {item.away}</Text>
-                </View>
-            </TouchableOpacity>
-
-        )
-    })
 
     const renderItems = useCallback(({ item, index }) => {
         return (
@@ -247,7 +175,7 @@ const VendorHome = (props) => {
                     <TouchableOpacity>
                         <Drawer />
                     </TouchableOpacity>
-                    <Text style={{ fontFamily: 'PBo', fontSize: 24, color: '#FFFFFF' }}>LOGO</Text>
+                    <Text style={{ fontFamily: 'PBo', fontSize: 24, color: '#FFFFFF' }}> </Text>
                 </View>
 
                 <View style={{ position: 'absolute', bottom: 0, height: "90%", width: "100%", backgroundColor: '#161527', borderRadius: 43 }}></View>
@@ -255,7 +183,7 @@ const VendorHome = (props) => {
 
 
 
-                <View style={{ width: "90%", marginTop: 30, alignSelf: 'center', borderRadius: 18, borderWidth: 1, borderColor: '#A047C8', height: 87, backgroundColor: '#000000', paddingHorizontal: 30, paddingTop: 15, marginTop: 50 }}>
+                {/* <View style={{ width: "90%", marginTop: 30, alignSelf: 'center', borderRadius: 18, borderWidth: 1, borderColor: '#A047C8', height: 87, backgroundColor: '#000000', paddingHorizontal: 30, paddingTop: 15, marginTop: 50 }}>
                     <Text style={{ fontFamily: 'LR', fontSize: 12, color: '#FFFFFF', alignSelf: 'center' }}>You have Rented 12 Games this week & Earned</Text>
                     <View style={{ marginTop: 10, flexDirection: 'row', justifyContent: 'space-between', width: '85%', alignSelf: 'center', alignItems: 'center', borderRadius: 5 }}>
                         <Text style={{ fontSize: 27, fontFamily: 'LR', color: '#FFFFFF' }}>$654</Text>
@@ -267,7 +195,7 @@ const VendorHome = (props) => {
 
                     </View>
 
-                </View>
+                </View> */}
 
 
 
@@ -275,17 +203,19 @@ const VendorHome = (props) => {
                 <ScrollView
                     contentContainerStyle={{ paddingBottom: 100 }}
                 >
-                    <View style={{ paddingLeft: 20 }}>
+                    <View style={{ paddingLeft: 20, marginTop: 20 }}>
 
                         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                            <Text style={{ fontFamily: 'LBo', fontSize: 18, color: '#FFFFFF', marginTop: 10 }}>Given on Rent ({rentedPosts.length})</Text>
+                            <Text style={{ fontFamily: 'LBo', fontSize: 18, color: '#FFFFFF', marginTop: 10 }}>Out on Rent ({rentedPosts.length})</Text>
                             {rentedPosts.length ? <TouchableOpacity
                                 onPress={() => {
                                     props.navigation.navigate('ViewAllV', {
                                         data: rentedPosts,
-                                        title: "Given on Rent",
+                                        title: "Out on Rent",
                                         request: true,
-                                        nextScreen: 'PostDetailPage'
+                                        nextScreen: 'PostDetailPage',
+                                        userData: userData
+
                                     })
                                 }}
                                 style={{ position: 'absolute', right: 20, }}>
@@ -312,7 +242,9 @@ const VendorHome = (props) => {
                                         data: livePost,
                                         title: "Live Posts",
                                         request: true,
-                                        nextScreen: 'PostDetailPage'
+                                        nextScreen: 'PostDetailPage',
+                                        userData: userData
+
                                     })
                                 }}
                                 style={{ position: 'absolute', right: 20, }}>
@@ -330,15 +262,17 @@ const VendorHome = (props) => {
                             showsHorizontalScrollIndicator={false}
 
                         />
+                        
                         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                            <Text style={{ fontFamily: 'LBo', fontSize: 18, color: '#FFFFFF', marginTop: 10 }}>Sent For Approval ({pendingPosts.length})</Text>
-                            {pendingPosts.length ? <TouchableOpacity
+                            <Text style={{ fontFamily: 'LBo', fontSize: 18, color: '#FFFFFF', marginTop: 10 }}>Sent For Approval ({approvalPosts.length})</Text>
+                            {approvalPosts.length ? <TouchableOpacity
                                 onPress={() => {
                                     props.navigation.navigate('ViewAllV', {
-                                        data: pendingPosts,
-                                        title: "Requests",
+                                        data: approvalPosts,
+                                        title: "Sent For Approval",
                                         request: true,
-                                        nextScreen: 'PostDetailPage'
+                                        nextScreen: 'PostDetailPage',
+                                        userData: userData
                                     })
                                 }}
                                 style={{ position: 'absolute', right: 20, }}>
@@ -346,7 +280,7 @@ const VendorHome = (props) => {
                             </TouchableOpacity> : null}
                         </View>
                         <FlatList
-                            data={pendingPosts}
+                            data={approvalPosts}
                             keyExtractor={keyExtractor}
                             contentContainerStyle={{ paddingRight: 10 }}
                             style={{ marginTop: 10, marginLeft: -15 }}
@@ -356,7 +290,9 @@ const VendorHome = (props) => {
 
                         />
 
+                        <Seller />
                     </View>
+
 
                 </ScrollView>
 

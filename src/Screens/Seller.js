@@ -26,8 +26,8 @@ const Seller = (props) => {
 
     const [deniedPost, setDeniedPost] = useState([]);
     const [pendingPosts, setPendingPosts] = useState([]);
-    const [rentedPosts, setRentedPosts] = useState([]);
-    const [returnedPosts, setReturnedPosts]  = useState([]);
+    const [rentedPosts1, setRentedPosts1] = useState([]);
+    const [returnedPosts, setReturnedPosts] = useState([]);
 
     const navigation = useNavigation()
 
@@ -44,7 +44,7 @@ const Seller = (props) => {
                                 console.log(data)
                                 // setLivePost(data.live_posts);
                                 setPendingPosts(data.pendings);
-                                setRentedPosts(data.rented);
+                                setRentedPosts1(data.rented);
                                 setDeniedPost(data.denied)
                                 setReturnedPosts(data.returned)
                                 setLoading(false)
@@ -73,15 +73,12 @@ const Seller = (props) => {
 
     const keyExtractor = useCallback((item, index) => index.toString(), []);
 
-
-
-    const renderItems = useCallback(({ item, index }) => {
-        console.log(item)
+    const renderItems1 = useCallback(({ item, index }) => {
         return (
             <TouchableOpacity
                 onPress={() => {
-                    props.navigation.navigate('PostDetailsV', {
-                        params:item,
+                    navigation.navigate('PostDetailsV', {
+                        params: item,
                         // request :true
                     })
                 }}
@@ -130,9 +127,9 @@ const Seller = (props) => {
                     //     params: item,
                     //     vendor: true
                     // })
-                    props.navigation.navigate('PostDetailsV', {
-                        params : item,
-                        request :true
+                    navigation.navigate('PostDetailsV', {
+                        params: item,
+                        request: true
                     })
                 }}
                 style={{ marginLeft: 15, width: 128, height: 166 }}>
@@ -168,44 +165,37 @@ const Seller = (props) => {
         )
     })
 
-    // if (loading) {
-    //     return (
-    //         <View style={{ flex: 1, backgroundColor: '#A047C8' }}>
-    //             <Loader />
-    //         </View>
-    //     )
-
-
-    // }
 
 
     return (
-        <View style={{ flex: 1, backgroundColor: '#A047C8' }}>
-            <View style={{ zIndex: 1 }}>
+        <View
+        // style={{ flex: 1, backgroundColor: '#A047C8' }}
+        >
+            {/* <View style={{ zIndex: 1 }}>
                 <DropdownAlert ref={ref => dropDownAlertRef = ref} />
-            </View>
-            {loading && <Loader />}
-            <ImageBackground
+            </View> */}
+            {/* {loading && <Loader />} */}
+            {/* <ImageBackground
                 source={require("../assets/HomeBGImage.png")}
                 style={{ width: "100%", height: 265, flex: 1 }}
-            >
+            > */}
 
-                <View style={{ paddingHorizontal: "5%", flexDirection: 'row', justifyContent: 'space-between', marginTop: Platform.OS == 'ios' ? 30 : 25, }}>
+            {/* <View style={{ paddingHorizontal: "5%", flexDirection: 'row', justifyContent: 'space-between', marginTop: Platform.OS == 'ios' ? 30 : 25, }}>
                     <StatusBar
                         hidden={true}
                     />
                     <TouchableOpacity>
                         <Drawer />
                     </TouchableOpacity>
-                    <Text style={{ fontFamily: 'PBo', fontSize: 24, color: '#FFFFFF' }}>LOGO</Text>
-                </View>
+                    <Text style={{ fontFamily: 'PBo', fontSize: 24, color: '#FFFFFF' }} </Text>
+                </View> */}
 
-                <View style={{ position: 'absolute', bottom: 0, height: "90%", width: "100%", backgroundColor: '#161527', borderRadius: 43 }}></View>
-
-
+            {/* <View style={{ position: 'absolute', bottom: 0, height: "90%", width: "100%", backgroundColor: '#161527', borderRadius: 43 }}></View> */}
 
 
-                {/* <View style={{ width: "90%", marginTop: 30, alignSelf: 'center', borderRadius: 18, borderWidth: 1, borderColor: '#A047C8', height: 87, backgroundColor: '#000000', paddingHorizontal: 30, paddingTop: 15, marginTop: 50 }}>
+
+
+            {/* <View style={{ width: "90%", marginTop: 30, alignSelf: 'center', borderRadius: 18, borderWidth: 1, borderColor: '#A047C8', height: 87, backgroundColor: '#000000', paddingHorizontal: 30, paddingTop: 15, marginTop: 50 }}>
                     <Text style={{ fontFamily: 'LR', fontSize: 12, color: '#FFFFFF', alignSelf: 'center' }}>You have Rented 12 Games this week & Earned</Text>
                     <View style={{ marginTop: 10, flexDirection: 'row', justifyContent: 'space-between', width: '85%', alignSelf: 'center', alignItems: 'center', borderRadius: 5 }}>
                         <Text style={{ fontSize: 27, fontFamily: 'LR', color: '#FFFFFF' }}>$654</Text>
@@ -222,135 +212,135 @@ const Seller = (props) => {
 
 
 
-                <ScrollView
+            {/* <ScrollView
                     contentContainerStyle={{ paddingBottom: 100 }}
-                >
-                    <View style={{ paddingLeft: 20 ,marginTop:25}}>
+                > */}
+            {/* <View style={{ paddingLeft: 20, marginTop: 25 }}> */}
 
 
-                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                            <Text style={{ fontFamily: 'LBo', fontSize: 18, color: '#FFFFFF', marginTop: 10 }}>Requests ({pendingPosts.length})</Text>
-                            {pendingPosts.length ? <TouchableOpacity 
-                                onPress={() => {
-                                    props.navigation.navigate('ViewAllV', {
-                                        data: pendingPosts,
-                                        title: "Requests",
-                                        request: true,
-                                        nextScreen: 'PostDetailsV'
-                                    })
-                                }}
-                                style={{ position: 'absolute', right: 20, }}>
-                                <Text style={{ fontFamily: 'LR', fontSize: 11, color: '#FFFFFF', textDecorationLine: "underline", }}>View All</Text>
-                            </TouchableOpacity> : null}
-                        </View>
-                        <FlatList
-                            data={pendingPosts}
-                            keyExtractor={keyExtractor}
-                            contentContainerStyle={{ paddingRight: 10 }}
-                            style={{ marginTop: 10, marginLeft: -15 }}
-                            horizontal={true}
-                            renderItem={renderPendings}
-                            showsHorizontalScrollIndicator={false}
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <Text style={{ fontFamily: 'LBo', fontSize: 18, color: '#FFFFFF', marginTop: 10 }}>Requests ({pendingPosts.length})</Text>
+                    {pendingPosts.length ? <TouchableOpacity
+                        onPress={() => {
+                            navigation.navigate('ViewAllV', {
+                                data: pendingPosts,
+                                title: "Requests",
+                                request: true,
+                                nextScreen: 'PostDetailsV'
+                            })
+                        }}
+                        style={{ position: 'absolute', right: 20, }}>
+                        <Text style={{ fontFamily: 'LR', fontSize: 11, color: '#FFFFFF', textDecorationLine: "underline", }}>View All</Text>
+                    </TouchableOpacity> : null}
+                </View>
+                <FlatList
+                    data={pendingPosts}
+                    keyExtractor={keyExtractor}
+                    contentContainerStyle={{ paddingRight: 10 }}
+                    style={{ marginTop: 10, marginLeft: -15 }}
+                    horizontal={true}
+                    renderItem={renderPendings}
+                    showsHorizontalScrollIndicator={false}
 
-                        />
-
-
+                />
 
 
-                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                            <Text style={{ fontFamily: 'LBo', fontSize: 18, color: '#FFFFFF', marginTop: 10 }}>Out on Rental ({rentedPosts.length})</Text>
-                            {rentedPosts.length ? <TouchableOpacity 
-                                 onPress={() => {
-                                    props.navigation.navigate('ViewAllV', {
-                                        data: rentedPosts,
-                                        title: "Given on Rent",
-                                        request: false,
-                                        nextScreen: 'PostDetailsV'
-                                    })
-                                }}
-                                style={{ position: 'absolute', right: 20, }}>
-                                <Text style={{ fontFamily: 'LR', fontSize: 11, color: '#FFFFFF', textDecorationLine: "underline", }}>View All</Text>
-                            </TouchableOpacity>
-                                : null}
-                        </View>
-                        <FlatList
-                            data={rentedPosts}
-                            keyExtractor={keyExtractor}
-                            contentContainerStyle={{ paddingRight: 10 }}
-                            style={{ marginTop: 10, marginLeft: -15 }}
-                            horizontal={true}
-                            renderItem={renderItems}
-                            showsHorizontalScrollIndicator={false}
-
-                        />
-
-                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                            <Text style={{ fontFamily: 'LBo', fontSize: 18, color: '#FFFFFF', marginTop: 10 }}>Dinied Rentals ({deniedPost.length})</Text>
-                            {deniedPost.length ? <TouchableOpacity 
-                                onPress={() => {
-                                    props.navigation.navigate('ViewAllV', {
-                                        data: deniedPost,
-                                        title: "Dinied Posts",
-                                        request: false,
-                                        nextScreen: 'PostDetailsV'
-                                    })
-                                }}
-                                style={{ position: 'absolute', right: 20, }}>
-                                <Text style={{ fontFamily: 'LR', fontSize: 11, color: '#FFFFFF', textDecorationLine: "underline", }}>View All</Text>
-                            </TouchableOpacity>
-                                : null}
-                        </View>
-                        <FlatList
-                            data={deniedPost}
-                            keyExtractor={keyExtractor}
-                            contentContainerStyle={{ paddingRight: 10 }}
-                            style={{ marginTop: 10, marginLeft: -15 }}
-                            horizontal={true}
-                            renderItem={renderItems}
-                            showsHorizontalScrollIndicator={false}
-
-                        />
-
-                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                            <Text style={{ fontFamily: 'LBo', fontSize: 18, color: '#FFFFFF', marginTop: 10 }}>Returned Games({returnedPosts.length})</Text>
-                            {returnedPosts.length ? <TouchableOpacity 
-                                   onPress={() => {
-                                    props.navigation.navigate('ViewAllV', {
-                                        data: returnedPosts,
-                                        title: "Returned Games",
-                                        request: false,
-                                        nextScreen: 'PostDetailsV'
-                                    })
-                                }}
-                                style={{ position: 'absolute', right: 20, }}>
-                                <Text style={{ fontFamily: 'LR', fontSize: 11, color: '#FFFFFF', textDecorationLine: "underline", }}>View All</Text>
-                            </TouchableOpacity>
-                                : null}
-                        </View>
-                        <FlatList
-                            data={returnedPosts}
-                            keyExtractor={keyExtractor}
-                            contentContainerStyle={{ paddingRight: 10 }}
-                            style={{ marginTop: 10, marginLeft: -15 }}
-                            horizontal={true}
-                            renderItem={renderItems}
-                            showsHorizontalScrollIndicator={false}
-
-                        />
-
-                    </View>
-
-                </ScrollView>
 
 
-            </ImageBackground>
-            <TouchableOpacity
+                {/* <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <Text style={{ fontFamily: 'LBo', fontSize: 18, color: '#FFFFFF', marginTop: 10 }}>Out on Rental ({rentedPosts1.length})</Text>
+                    {rentedPosts1.length ? <TouchableOpacity
+                        onPress={() => {
+                            navigation.navigate('ViewAllV', {
+                                data: rentedPosts1,
+                                title: "Given on Rent",
+                                request: false,
+                                nextScreen: 'PostDetailsV'
+                            })
+                        }}
+                        style={{ position: 'absolute', right: 20, }}>
+                        <Text style={{ fontFamily: 'LR', fontSize: 11, color: '#FFFFFF', textDecorationLine: "underline", }}>View All</Text>
+                    </TouchableOpacity>
+                        : null}
+                </View>
+                <FlatList
+                    data={rentedPosts1}
+                    keyExtractor={keyExtractor}
+                    contentContainerStyle={{ paddingRight: 10 }}
+                    style={{ marginTop: 10, marginLeft: -15 }}
+                    horizontal={true}
+                    renderItem={renderItems1}
+                    showsHorizontalScrollIndicator={false}
+
+                /> */}
+
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <Text style={{ fontFamily: 'LBo', fontSize: 18, color: '#FFFFFF', marginTop: 10 }}>Denied Rentals ({deniedPost.length})</Text>
+                    {deniedPost.length ? <TouchableOpacity
+                        onPress={() => {
+                            navigation.navigate('ViewAllV', {
+                                data: deniedPost,
+                                title: "Denied Posts",
+                                request: false,
+                                nextScreen: 'PostDetailsV'
+                            })
+                        }}
+                        style={{ position: 'absolute', right: 20, }}>
+                        <Text style={{ fontFamily: 'LR', fontSize: 11, color: '#FFFFFF', textDecorationLine: "underline", }}>View All</Text>
+                    </TouchableOpacity>
+                        : null}
+                </View>
+                <FlatList
+                    data={deniedPost}
+                    keyExtractor={keyExtractor}
+                    contentContainerStyle={{ paddingRight: 10 }}
+                    style={{ marginTop: 10, marginLeft: -15 }}
+                    horizontal={true}
+                    renderItem={renderItems1}
+                    showsHorizontalScrollIndicator={false}
+
+                />
+
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <Text style={{ fontFamily: 'LBo', fontSize: 18, color: '#FFFFFF', marginTop: 10 }}>Returned Rentals({returnedPosts.length})</Text>
+                    {returnedPosts.length ? <TouchableOpacity
+                        onPress={() => {
+                            navigation.navigate('ViewAllV', {
+                                data: returnedPosts,
+                                title: "Returned Rentals",
+                                request: false,
+                                nextScreen: 'PostDetailsV'
+                            })
+                        }}
+                        style={{ position: 'absolute', right: 20, }}>
+                        <Text style={{ fontFamily: 'LR', fontSize: 11, color: '#FFFFFF', textDecorationLine: "underline", }}>View All</Text>
+                    </TouchableOpacity>
+                        : null}
+                </View>
+                <FlatList
+                    data={returnedPosts}
+                    keyExtractor={keyExtractor}
+                    contentContainerStyle={{ paddingRight: 10 }}
+                    style={{ marginTop: 10, marginLeft: -15 }}
+                    horizontal={true}
+                    renderItem={renderItems1}
+                    showsHorizontalScrollIndicator={false}
+
+                />
+
+            {/* </View> */}
+
+            {/* </ScrollView> */}
+
+
+            {/* </ImageBackground> */}
+            {/* <TouchableOpacity
                 onPress={() => {
                     navigation.navigate("NewPost")
                 }}
                 style={{ position: 'absolute', bottom: 100, right: 10, backgroundColor: '#A047C8', justifyContent: 'center', alignItems: 'center', width: 59, height: 59, borderRadius: 59 / 2, paddingBottom: 5 }}>
                 <PlusIcon />
-            </TouchableOpacity>
+            </TouchableOpacity> */}
         </View>
     )
 }

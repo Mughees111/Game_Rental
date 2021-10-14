@@ -18,7 +18,7 @@ const OTP = (props) => {
                 style={{ flex: 1 }}
             >
                 <View style={{ marginLeft: 10, width: "80%", alignSelf: 'center', flex: 1 }}>
-                    <Text style={{ fontFamily: 'PBo', fontSize: 24, color: '#FFFFFF', marginTop: Platform.OS == 'ios' ? 30 : 27, alignSelf: 'flex-end' }}>LOGO</Text>
+                    <Text style={{ fontFamily: 'PBo', fontSize: 24, color: '#FFFFFF', marginTop: Platform.OS == 'ios' ? 30 : 27, alignSelf: 'flex-end' }}> </Text>
                     <Text style={{fontFamily:'PSBo',fontSize:24,color:'#FFFFFF',marginTop:190,lineHeight:28}}>Enter OTP</Text>
                     <Text style={{fontSize:12,fontFamily:'PRe',color:'#BFBFBF',lineHeight:18}}>sent on *********4343</Text>
                     
