@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from 'react'
 import { Text, View, ImageBackground, TouchableOpacity, StyleSheet, FlatList, Image, Dimensions, TextInput, ScrollView } from 'react-native'
 import Header from '../Components/Header'
-import { ArrowBack, PlusIcon } from '../Components/SvgIcons'
+import { ArrowBack, PDPChatIcon, PlusIcon } from '../Components/SvgIcons'
 import Modal from 'react-native-modal';
 import Picker from '../Components/Picker';
 import { StatusBar } from 'expo-status-bar';
@@ -25,11 +25,12 @@ var dropDownAlertRef;
 const PostDetailsV = (props) => {
 
     const item = props.route.params.params;
-    
-    const [loading,setLoading] = useState(false)
-    const [user, setUser] =useState();
+
+    const [loading, setLoading] = useState(false)
+    const [user, setUser] = useState();
 
     console.log(item)
+    console.log(props.route.params)
 
     useFocusEffect(React.useCallback(() => {
         retrieveItem("login_data_vendor")
@@ -62,7 +63,7 @@ const PostDetailsV = (props) => {
                             onPress={() => {
                                 props.navigation.goBack();
                             }}
-                            style={{ alignSelf: 'center',padding:10,marginLeft:-5 }}>
+                            style={{ alignSelf: 'center', padding: 10, marginLeft: -5 }}>
                             <ArrowBack />
                         </TouchableOpacity>
                         {/* <View style={{ flexDirection: 'row' }}>
@@ -84,7 +85,32 @@ const PostDetailsV = (props) => {
 
 
                 <View style={{ paddingHorizontal: 20, marginTop: 30 }}>
-                    <Text style={{ fontFamily: 'LBo', fontSize: 18, color: '#FFFFFF' }}>Out on Rent</Text>
+
+                    <Text style={{ fontFamily: 'LBo', fontSize: 18, color: '#FFFFFF' }} >{props.route.params.title ? props.route.params.title : "Out on Rent"} </Text>
+                    {
+                        props.route.params.chat &&
+                        <TouchableOpacity
+                            onPress={() => {
+                                console.log(item)
+                                // props.navigation.navigate('ChatStackNavigator', {
+                                //     screen: 'ChatDetails',
+                                //     params: {
+                                //         user_id: item.user.id,
+                                //         convo_id: item.convo.convo_id,
+                                //         name: item.user.name,
+                                //         picUrl: item.user.profile_pic
+                                //     }
+
+                                // })
+                                // console.log(item.user_id)
+                                // console.log(item)
+                            }}
+                            style={{ width: "20%", height: 53, borderRadius: 9, borderColor: '#FFFFFF', borderWidth: 1, justifyContent: 'center', alignItems: 'center' }}>
+                            <PDPChatIcon />
+                        </TouchableOpacity>
+                    }
+
+
 
                     <Text style={[styles.headingText, { marginTop: 30 }]}>Order ID</Text>
                     <Text style={styles.text}>53545</Text>
@@ -226,6 +252,7 @@ const PostDetailsV = (props) => {
                         </View>
 
                     }
+
                 </View>
 
 

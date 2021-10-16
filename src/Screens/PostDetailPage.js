@@ -170,7 +170,7 @@ const PostDetailPage = (props) => {
                         </View>
                         <View style={{ width: 250, height: 29, borderRadius: 28, backgroundColor: '#000000', marginTop: 10, justifyContent: 'center', left: -50 }}>
                             <Text style={{ fontFamily: 'PBo', fontSize: 15, color: '#A047C8', marginLeft: 30 }}>Game:
-                                <Text style={{ fontSize: 15, color: '#FFFFFF', }}>     {item?.game_title ? item.game_title : item?.post?.game_title ? item.post.game_title : null}</Text>
+                                <Text style={{ fontSize: 15, color: '#FFFFFF', }}>     {item?.game_title ? item.game_title : item?.post?.game_title ? item.post.game_title : item.title}</Text>
                             </Text>
                         </View>
                         <View style={{ width: 250, height: 29, borderRadius: 28, backgroundColor: '#000000', marginTop: 10, justifyContent: 'center', left: -50 }}>

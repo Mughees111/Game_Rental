@@ -62,8 +62,8 @@ const VendorChat = (props) => {
         return (
             <TouchableOpacity
                 onPress={() => {
-                    item.selected = true
-                    setChatBg(!chatBg)
+                    // item.selected = true
+                    // setChatBg(!chatBg)
                     console.log(item)
                     props.navigation.navigate('VendorChatDetails', {
                         user_id: item.user.id,

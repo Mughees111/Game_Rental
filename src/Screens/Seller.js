@@ -127,10 +127,12 @@ const Seller = (props) => {
                     //     params: item,
                     //     vendor: true
                     // })
-                    navigation.navigate('PostDetailsV', {
-                        params: item,
-                        request: true
-                    })
+                    console.log(pendingPosts)
+                    // navigation.navigate('PostDetailsV', {
+                    //     params: item,
+                    //     request: true,
+                    //     chat : true
+                    // })
                 }}
                 style={{ marginLeft: 15, width: 128, height: 166 }}>
 
@@ -226,7 +228,8 @@ const Seller = (props) => {
                                 data: pendingPosts,
                                 title: "Requests",
                                 request: true,
-                                nextScreen: 'PostDetailsV'
+                                nextScreen: 'PostDetailsV',
+                                chat : true
                             })
                         }}
                         style={{ position: 'absolute', right: 20, }}>

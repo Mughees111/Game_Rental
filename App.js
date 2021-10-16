@@ -273,6 +273,7 @@ export default function App(props) {
         <Stack.Screen name="PostDetailPage" component={PostDetailPage} />
         <Stack.Screen name="NewPost" component={NewPost} />
         <Stack.Screen name="ViewAllV" component={ViewAllV} />
+        <Stack.Screen name="PostDetailsV" component={PostDetailsV} />
       </Stack.Navigator>
     )
   }

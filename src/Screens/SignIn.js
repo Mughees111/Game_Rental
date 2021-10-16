@@ -89,6 +89,7 @@ const SignIn = (props) => {
                 }
             }).catch((error) => {
                 setLoading(false)
+                console.log(error)
                 alertRef.alertWithType("error", "Error", "Internet error")
             });
     }

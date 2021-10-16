@@ -639,7 +639,7 @@ const NewPost = (props) => {
                         key: GOOGLE_MAPS,
                         language: 'en', // language of the results
                         // types: '(cities)' // default: 'geocode'
-                        components: "country:pk"
+                        components: "country:us|country:pr|country:vi|country:gu|country:mp"
                       }}
 
                       styles={{

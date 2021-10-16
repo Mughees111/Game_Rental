@@ -154,6 +154,48 @@ const VendorHome = (props) => {
         )
     })
 
+    const renderLivePosts = useCallback(({ item, index }) => {
+        return (
+            <TouchableOpacity
+                onPress={() => {
+                    // props.navigation.navigate('Chat12')
+                    props.navigation.navigate('PostDetailPage', {
+                        params: item,
+                        chat : true
+                    })
+                }}
+                style={{ marginLeft: 15, width: 128, height: 166 }}>
+
+
+                <ImageBackground
+                    source={{ uri: item.images[0] }}
+                    style={{ width: 128, height: 161, overflow: 'hidden' }}
+                >
+
+                    <Image
+                        style={{ position: 'absolute', bottom: 0, overflow: 'hidden' }}
+                        source={require("../assets/Mask1.png")}
+                    />
+
+
+
+                    <View style={{ position: 'absolute', bottom: 20, alignSelf: 'center' }}>
+                        <Text style={{ color: "#FFFFFF", fontSize: "LR", fontSize: 8, alignSelf: 'center' }}>{item.title}</Text>
+                        <Text style={{ color: "#FFFFFF", fontSize: "LBo", fontSize: 13 }}>{item.game_title}</Text>
+                        {/* <Text>Asad Sultan</Text> */}
+
+                    </View>
+                </ImageBackground>
+                <View style={{ position: 'absolute', bottom: 0, alignSelf: 'center', width: 87, height: 18, borderRadius: 6, backgroundColor: '#A047C8', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontFamily: 'LBo', fontSize: 8, color: "white" }}>
+                        {/* 4 Days Left */}
+                        {item.away}</Text>
+                </View>
+            </TouchableOpacity>
+
+        )
+    })
+
 
 
 
@@ -229,7 +271,7 @@ const VendorHome = (props) => {
                             contentContainerStyle={{ paddingRight: 10 }}
                             style={{ marginTop: 10, marginLeft: -15 }}
                             horizontal={true}
-                            renderItem={renderItems}
+                            renderItem={renderLivePosts}
                             showsHorizontalScrollIndicator={false}
 
                         />
