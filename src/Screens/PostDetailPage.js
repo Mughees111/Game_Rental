@@ -1,7 +1,7 @@
 
 import { useFocusEffect } from '@react-navigation/native'
 import React, { useCallback, useState } from 'react'
-import { Text, View, ImageBackground,SafeAreaView, TouchableOpacity, StyleSheet, FlatList, Image, Dimensions, TextInput, ScrollView } from 'react-native'
+import { Text, View, ImageBackground, SafeAreaView, TouchableOpacity, StyleSheet, FlatList, Image, Dimensions, TextInput, ScrollView } from 'react-native'
 import Header from '../Components/Header'
 import { RattingStarIcon, HeartWhiteIcon, XBoxIcon, KMLocationIcon, PickupIcon, PDPChatIcon, DeliveryLargeIcon, ArrowBack } from '../Components/SvgIcons'
 
@@ -256,10 +256,16 @@ const PostDetailPage = (props) => {
                                                         if (data) {
                                                             setLoading(false)
                                                             if (data.action == 'success') {
-                                                                x.alertWithType("success", "Success", "Requested");
-                                                                setTimeout(() => {
-                                                                    props.navigation.goBack();
-                                                                }, 1000);
+                                                                if (data.error) {
+                                                                    x.alertWithType("error", "Error", data.error);
+                                                                }
+                                                                else {
+                                                                    x.alertWithType("success", "Success", "Requested");
+                                                                    setTimeout(() => {
+                                                                        props.navigation.goBack();
+                                                                    }, 1000);
+                                                                }
+
                                                             }
                                                             else {
                                                                 x.alertWithType("error", "Error", data.error);
@@ -282,6 +288,31 @@ const PostDetailPage = (props) => {
 
                                 </View>
                             </View>
+                        }
+                        {
+                            props.route.params.chat &&
+                            <TouchableOpacity
+                                onPress={() => {
+                                    const item = props?.route?.params?.params
+                                    if (item.buyer) {
+                                        props.navigation.navigate('ChatStackNavigator', {
+                                            screen: 'VendorChatDetails',
+                                            params: {
+                                                user_id: item.buyer.id,
+                                                convo_id: item.buyer.convo_id,
+                                                name: item.buyer.name,
+                                                picUrl: item.buyer.profile_pic_url
+                                            }
+                                        })
+                                    }
+
+                                    // console.log(item.user_id)
+                                    // console.log(item)
+                                }}
+                                style={{ width: "100%", height: 53, borderRadius: 9, marginTop: 15, borderWidth: 1, borderColor: '#fff', justifyContent: 'center', alignItems: 'center' }}>
+                                {/* <PDPChatIcon /> */}
+                                <Text style={{ fontFamily: 'PMe', fontSize: 18, color: '#fff' }}>Chat</Text>
+                            </TouchableOpacity>
                         }
 
 

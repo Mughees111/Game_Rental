@@ -43,7 +43,7 @@ const OnBoardfing = (props) => {
                     dummy text ever since the 1500s, when an
                     of Lorem Ipsum.
                 </Text> */}
-                <Text style={{ fontFamily: 'PSBo', fontSize: 35, color: '#FFFFFF', marginLeft: 35, marginTop: 25, lineHeight: 40 }}>Play Games{"\n"}in an Eazy Way!</Text>
+                <Text style={{ fontFamily: 'PSBo', fontSize: 35, color: '#FFFFFF', marginLeft: 35, marginTop: 25, lineHeight: 40 }}>Play Games{"\n"}the Eazy Way!</Text>
                 <TouchableOpacity
                     onPress={() => {
                         props.navigation.navigate('CreateAccount')

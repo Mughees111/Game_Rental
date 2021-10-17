@@ -86,29 +86,9 @@ const PostDetailsV = (props) => {
 
                 <View style={{ paddingHorizontal: 20, marginTop: 30 }}>
 
-                    <Text style={{ fontFamily: 'LBo', fontSize: 18, color: '#FFFFFF' }} >{props.route.params.title ? props.route.params.title : "Out on Rent"} </Text>
-                    {
-                        props.route.params.chat &&
-                        <TouchableOpacity
-                            onPress={() => {
-                                console.log(item)
-                                // props.navigation.navigate('ChatStackNavigator', {
-                                //     screen: 'ChatDetails',
-                                //     params: {
-                                //         user_id: item.user.id,
-                                //         convo_id: item.convo.convo_id,
-                                //         name: item.user.name,
-                                //         picUrl: item.user.profile_pic
-                                //     }
 
-                                // })
-                                // console.log(item.user_id)
-                                // console.log(item)
-                            }}
-                            style={{ width: "20%", height: 53, borderRadius: 9, borderColor: '#FFFFFF', borderWidth: 1, justifyContent: 'center', alignItems: 'center' }}>
-                            <PDPChatIcon />
-                        </TouchableOpacity>
-                    }
+                    <Text style={{ fontFamily: 'LBo', fontSize: 18, color: '#FFFFFF' }} >{props.route.params.title ? props.route.params.title : "Out on Rent"} </Text>
+
 
 
 
@@ -127,15 +107,16 @@ const PostDetailsV = (props) => {
                     {/* <Text style={[styles.headingText, { marginTop: 30 }]}>Sellers Address</Text>
                     <Text style={styles.text}>Street 43, House 443, Basic Colony Florida</Text> */}
 
-                    <Text style={[styles.headingText, { marginTop: 30 }]}>Buyers Photo</Text>
+                    {/* <Text style={[styles.headingText, { marginTop: 30 }]}>Buyers Photo</Text>
                     <Image
                         style={{ width: 70, height: 70, borderRadius: 35, marginTop: 10 }}
                         source={{ uri: item.buyer.profile_pic_url }}
                     // source={require("../assets/ChatsProfile.png")}
-                    />
+                    /> */}
                     {/* <TouchableOpacity style={{ width: "100%", height: 54, backgroundColor: '#A047C8', borderRadius: 9, justifyContent: 'center', alignItems: 'center', marginTop: 20 }}>
                         <Text style={{ fontFamily: 'PMe', color: '#FFFFFF', fontSize: 18 }}>Mark As Returned</Text>
                     </TouchableOpacity> */}
+
 
                     <View style={{ position: 'absolute', right: 10 }}>
                         <TouchableOpacity
@@ -169,10 +150,10 @@ const PostDetailsV = (props) => {
                         </TouchableOpacity>
                     </View>
 
+
                     {
                         props.route.params.request &&
                         <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 30 }}>
-
                             <TouchableOpacity
                                 style={{ width: "48.5%", height: 55, marginLeft: -10, backgroundColor: '#A047C8', borderRadius: 9, justifyContent: 'center', alignItems: 'center' }}
                                 onPress={() => {
@@ -251,6 +232,28 @@ const PostDetailsV = (props) => {
 
                         </View>
 
+                    }
+                    {
+                        props.route.params.chat &&
+                        <TouchableOpacity
+                            onPress={() => {
+                                props.navigation.navigate('ChatStackNavigator', {
+                                    screen: 'VendorChatDetails',
+                                    params: {
+                                        user_id: item.buyer.id,
+                                        convo_id: item.buyer.convo_id,
+                                        name: item.buyer.name,
+                                        picUrl: item.buyer.profile_pic_url
+                                    }
+
+                                })
+                                // console.log(item.user_id)
+                                // console.log(item)
+                            }}
+                            style={{ width: "100%", height: 53, borderRadius: 9, marginTop: 15, borderWidth: 1, borderColor: '#fff', justifyContent: 'center', alignItems: 'center' }}>
+                            {/* <PDPChatIcon /> */}
+                            <Text style={{ fontFamily: 'PMe', fontSize: 18, color: '#fff' }}>Chat</Text>
+                        </TouchableOpacity>
                     }
 
                 </View>

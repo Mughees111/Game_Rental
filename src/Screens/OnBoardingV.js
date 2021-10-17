@@ -2,12 +2,15 @@ import { StatusBar } from 'expo-status-bar'
 import React from 'react'
 import { Image, View, Text, TouchableOpacity, ScrollView, Dimensions } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { changeSelection } from '../../Common'
+import { changeSelection, loggedInVendorObservable, selectionObservable } from '../../Common'
 import { Phone, EmailIcon, GoogleIcon, FaceBookIcon, ArrowBack } from '../Components/SvgIcons'
+import { useFocusEffect } from '@react-navigation/native';
 
 
 const OnBoardingV = (props) => {
 
+
+  
     return (
         <View style={{ flex: 1, backgroundColor: '#111111', }}>
             <StatusBar
@@ -22,10 +25,10 @@ const OnBoardingV = (props) => {
                 }}
             />
             <SafeAreaView
-                style={{ position: 'absolute',  left: 20 }}
+                style={{ position: 'absolute', left: 20 }}
             >
                 <TouchableOpacity
-                    style={{padding:10}}
+                    style={{ padding: 10 }}
                     onPress={() => {
                         changeSelection.changeNow(0)
                     }}

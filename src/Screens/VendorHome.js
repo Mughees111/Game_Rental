@@ -50,7 +50,7 @@ const VendorHome = (props) => {
                                 console.log(data)
                                 setLivePost(data.live_posts);
                                 setApprovalPosts(data.pending_posts);
-                                setRentedPosts(data.rented_posts);
+                                // setRentedPosts(data.rented_posts);
                                 setLoading(false)
                             }
                             else {
@@ -80,9 +80,10 @@ const VendorHome = (props) => {
                                 console.log(data)
                                 // setLivePost(data.live_posts);
                                 setPendingPosts(data.pendings);
-                                setRentedPosts1(data.rented);
+                                // setRentedPosts1(data.rented);
                                 setDeniedPost(data.denied)
                                 setReturnedPosts(data.returned)
+                                setRentedPosts(data.rented);
                                 setLoading(false)
                             }
                             else {
@@ -154,7 +155,7 @@ const VendorHome = (props) => {
         )
     })
 
-    const renderLivePosts = useCallback(({ item, index }) => {
+    const renderRentedPosts = useCallback(({ item, index }) => {
         return (
             <TouchableOpacity
                 onPress={() => {
@@ -168,7 +169,7 @@ const VendorHome = (props) => {
 
 
                 <ImageBackground
-                    source={{ uri: item.images[0] }}
+                    source={{ uri: item.post.images[0] }}
                     style={{ width: 128, height: 161, overflow: 'hidden' }}
                 >
 
@@ -180,8 +181,8 @@ const VendorHome = (props) => {
 
 
                     <View style={{ position: 'absolute', bottom: 20, alignSelf: 'center' }}>
-                        <Text style={{ color: "#FFFFFF", fontSize: "LR", fontSize: 8, alignSelf: 'center' }}>{item.title}</Text>
-                        <Text style={{ color: "#FFFFFF", fontSize: "LBo", fontSize: 13 }}>{item.game_title}</Text>
+                        <Text style={{ color: "#FFFFFF", fontSize: "LR", fontSize: 8, alignSelf: 'center' }}>{item.post.title}</Text>
+                        <Text style={{ color: "#FFFFFF", fontSize: "LBo", fontSize: 13 }}>{item.post.game_title}</Text>
                         {/* <Text>Asad Sultan</Text> */}
 
                     </View>
@@ -189,7 +190,7 @@ const VendorHome = (props) => {
                 <View style={{ position: 'absolute', bottom: 0, alignSelf: 'center', width: 87, height: 18, borderRadius: 6, backgroundColor: '#A047C8', justifyContent: 'center', alignItems: 'center' }}>
                     <Text style={{ fontFamily: 'LBo', fontSize: 8, color: "white" }}>
                         {/* 4 Days Left */}
-                        {item.away}</Text>
+                        {item.post.away}</Text>
                 </View>
             </TouchableOpacity>
 
@@ -256,7 +257,8 @@ const VendorHome = (props) => {
                                         title: "Out on Rent",
                                         request: true,
                                         nextScreen: 'PostDetailPage',
-                                        userData: userData
+                                        userData: userData,
+                                        chat : true
 
                                     })
                                 }}
@@ -271,7 +273,7 @@ const VendorHome = (props) => {
                             contentContainerStyle={{ paddingRight: 10 }}
                             style={{ marginTop: 10, marginLeft: -15 }}
                             horizontal={true}
-                            renderItem={renderLivePosts}
+                            renderItem={renderRentedPosts}
                             showsHorizontalScrollIndicator={false}
 
                         />

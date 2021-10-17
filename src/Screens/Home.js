@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react'
-import { Text, View, ImageBackground, TouchableOpacity, StyleSheet, FlatList, Image, Dimensions, TextInput, ScrollView } from 'react-native'
+import { Text, View, ImageBackground, TouchableOpacity, StyleSheet, FlatList, Image, Dimensions, TextInput, ScrollView, Alert } from 'react-native'
 import Header from '../Components/Header'
 import { FilterIcon, SearchIcon, RattingStarIcon, TruckIcon, AFilterIcon } from '../Components/SvgIcons'
 import Modal from 'react-native-modal';
@@ -14,7 +14,10 @@ import { urls } from "./../utils/Api_urls";
 import DropdownAlert from "react-native-dropdownalert";
 import Loader from "../utils/Loader";
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
+
 import * as Notifications from 'expo-notifications'
+import * as Permissions from 'expo-permissions';
+
 
 
 
@@ -76,27 +79,34 @@ const Home = (props) => {
     }, [user])
 
     const askNotificationPermission = async () => {
-        console.log("asking");
-        const { status: existingStatus } = await Notifications.getPermissionsAsync()
+        const { status: existingStatus } = await Permissions.getAsync(
+            Permissions.NOTIFICATIONS
+        );
         let finalStatus = existingStatus;
 
 
         if (finalStatus !== 'granted') {
-            const { status } = await Notifications.requestPermissionsAsync();
+            const { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
             finalStatus = status;
         }
         if (finalStatus == 'granted') {
             try {
                 let token = await Notifications.getExpoPushTokenAsync();
+                console.log('token is')
+                console.log(token.data)
                 setNotif_token(token.data)
                 store_location_on_server(token.data)
             } catch (error) {
-                //   alert(error);
+                // alert(error);
             }
         }
     }
 
+
+
     const store_location_on_server = async (localToken) => {
+        
+        console.log(localToken)
         const dbData = { token: user?.token ?? "", notif_key: localToken };
         const { isError, data } = await doPost(dbData, "do_store_notifiation_key");
         console.log(isError);

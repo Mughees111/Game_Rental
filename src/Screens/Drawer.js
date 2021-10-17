@@ -7,7 +7,7 @@ import { useRoute } from '@react-navigation/native';
 import { DrawerIcon, NotificationIcon, FavoriteIcon, OrderRevireIcon, SubscriptionIcon, SettingsIcon } from '../Components/SvgIcons'
 import { doConsole, retrieveItem, storeItem, validateEmail } from "../utils/functions";
 
-import { changeLoggedIn, changeLoggedInVendor, selectionObservable } from "../../Common";
+import { changeLoggedIn, changeLoggedInVendor, changeSelection, selectionObservable } from "../../Common";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 const { width, height } = Dimensions.get('window')
 

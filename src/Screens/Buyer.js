@@ -83,11 +83,16 @@ const Buyer = (props) => {
 
 
 
-    const renderItems = useCallback(({ item, index }) => {
+    const renderSentRequest = useCallback(({ item, index }) => {
         return (
             <TouchableOpacity
                 onPress={() => {
-                    props.navigation.navigate('PostDetails', { item, mAR: false })
+                    props.navigation.navigate('PostDetails', {
+                        item,
+                        mAR: false,
+                        chat: true,
+                        title : "Sent Request"
+                    })
                 }}
                 style={{ marginLeft: 15, width: 156, height: 183 }}>
 
@@ -117,11 +122,94 @@ const Buyer = (props) => {
 
         )
     })
+
+
+    const renderDenied = useCallback(({ item, index }) => {
+        return (
+            <TouchableOpacity
+                onPress={() => {
+                    props.navigation.navigate('PostDetails', {
+                        item,
+                        mAR: false,
+                        chat: true
+                    })
+                }}
+                style={{ marginLeft: 15, width: 156, height: 183 }}>
+
+
+                <ImageBackground
+                    source={{ uri: item.post.images[0] }}
+                    style={{ width: 156, height: 183, overflow: 'hidden' }}
+                    imageStyle={{ borderRadius: 10 }}
+                >
+
+                    <Image
+                        style={{ position: 'absolute', bottom: 0, overflow: 'hidden', width: 156, }}
+                        source={require("../assets/Mask2.png")}
+                    />
+
+                    <View style={{ position: 'absolute', bottom: 25, alignSelf: 'center' }}>
+                        <Text style={{ color: "#FFFFFF", fontSize: "LR", fontSize: 8, alignSelf: 'center' }}>{item.post.title}</Text>
+                        <Text style={{ color: "#FFFFFF", fontSize: "LBo", fontSize: 13 }}>{item.post.game_title}</Text>
+                        {/* <Text>Asad Sultan</Text> */}
+
+                    </View>
+                </ImageBackground>
+                <View style={{ position: 'absolute', bottom: 0, alignSelf: 'center', width: 87, height: 18, borderRadius: 6, backgroundColor: '#A047C8', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontFamily: 'LBo', fontSize: 8, color: "white" }}>{item.days} days Left</Text>
+                </View>
+            </TouchableOpacity>
+
+        )
+    })
+
     const renderRented = useCallback(({ item, index }) => {
         return (
             <TouchableOpacity
                 onPress={() => {
-                    props.navigation.navigate('PostDetails', { item, mAR: true })
+                    props.navigation.navigate('PostDetails', {
+                        item, mAR: true,
+                        chat : true,
+                        title : "Out on rent"
+                    })
+                }}
+                style={{ marginLeft: 15, width: 156, height: 183 }}>
+
+
+                <ImageBackground
+                    source={{ uri: item.post.images[0] }}
+                    style={{ width: 156, height: 183, overflow: 'hidden' }}
+                    imageStyle={{ borderRadius: 10 }}
+                >
+
+                    <Image
+                        style={{ position: 'absolute', bottom: 0, overflow: 'hidden', width: 156, }}
+                        source={require("../assets/Mask2.png")}
+                    />
+
+                    <View style={{ position: 'absolute', bottom: 25, alignSelf: 'center' }}>
+                        <Text style={{ color: "#FFFFFF", fontSize: "LR", fontSize: 8, alignSelf: 'center' }}>{item.post.title}</Text>
+                        <Text style={{ color: "#FFFFFF", fontSize: "LBo", fontSize: 13 }}>{item.post.game_title}</Text>
+                        {/* <Text>Asad Sultan</Text> */}
+
+                    </View>
+                </ImageBackground>
+                <View style={{ position: 'absolute', bottom: 0, alignSelf: 'center', width: 87, height: 18, borderRadius: 6, backgroundColor: '#A047C8', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontFamily: 'LBo', fontSize: 8, color: "white" }}>{item.days} days Left</Text>
+                </View>
+            </TouchableOpacity>
+
+        )
+    })
+    const renderReturned = useCallback(({ item, index }) => {
+        return (
+            <TouchableOpacity
+                onPress={() => {
+                    props.navigation.navigate('PostDetails', {
+                        item, mAR: true,
+                        chat : true,
+                        title : "Returned Rental"
+                    })
                 }}
                 style={{ marginLeft: 15, width: 156, height: 183 }}>
 
@@ -223,7 +311,7 @@ const Buyer = (props) => {
                             contentContainerStyle={{ paddingRight: 10 }}
                             style={{ marginTop: 10, marginLeft: -15 }}
                             horizontal={true}
-                            renderItem={renderItems}
+                            renderItem={renderSentRequest}
                             showsHorizontalScrollIndicator={false}
 
                         />
@@ -261,7 +349,7 @@ const Buyer = (props) => {
                             contentContainerStyle={{ paddingRight: 10 }}
                             style={{ marginTop: 10, marginLeft: -15 }}
                             horizontal={true}
-                            renderItem={renderItems}
+                            renderItem={renderDenied}
                             showsHorizontalScrollIndicator={false}
 
                         />
@@ -278,10 +366,11 @@ const Buyer = (props) => {
                             contentContainerStyle={{ paddingRight: 10 }}
                             style={{ marginTop: 10, marginLeft: -15 }}
                             horizontal={true}
-                            renderItem={renderItems}
+                            renderItem={renderReturned}
                             showsHorizontalScrollIndicator={false}
 
                         />
+
 
                     </View>
 

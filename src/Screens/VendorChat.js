@@ -26,7 +26,6 @@ const VendorChat = (props) => {
 
         retrieveItem("login_data_vendor").then((data) => {
             setUser(data)
-
             const reqObj = {
                 token: data.token
             }

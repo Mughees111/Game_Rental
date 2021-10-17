@@ -109,7 +109,50 @@ const RentalHistory = (props) => {
         return (
             <TouchableOpacity
                 onPress={() => {
-                    navigation.navigate('PostDetailsV', {
+                    props.navigation.navigate('PostDetailsV', {
+                        params: item,
+                        chat : true
+                        // request :true
+                    })
+                }}
+                style={{ marginLeft: 15, width: 128, height: 166, }}>
+
+
+                <ImageBackground
+                    source={{ uri: item.post.images[0] }}
+                    imageStyle={{ borderRadius: 15, }}
+                    resizeMode="stretch"
+                    style={{ width: 128, height: 161, overflow: 'hidden' }}
+                >
+
+                    <Image
+                        style={{ position: 'absolute', bottom: 0, overflow: 'hidden' }}
+                        source={require("../assets/Mask1.png")}
+                    />
+
+
+
+                    <View style={{ position: 'absolute', bottom: 20, alignSelf: 'center' }}>
+                        <Text style={{ color: "#FFFFFF", fontSize: "LR", fontSize: 8, alignSelf: 'center' }}>{item.post.title}</Text>
+                        <Text style={{ color: "#FFFFFF", fontSize: "LBo", fontSize: 13 }}>{item.post.game_title}</Text>
+                        {/* <Text>Asad Sultan</Text> */}
+
+                    </View>
+                </ImageBackground>
+                <View style={{ position: 'absolute', bottom: 0, alignSelf: 'center', width: 87, height: 18, borderRadius: 6, backgroundColor: '#A047C8', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontFamily: 'LBo', fontSize: 8, color: "white" }}>
+                        {/* 4 Days Left */}
+                        {item.post.away}</Text>
+                </View>
+            </TouchableOpacity>
+
+        )
+    })
+    const renderDenied = useCallback(({ item, index }) => {
+        return (
+            <TouchableOpacity
+                onPress={() => {
+                    props.navigation.navigate('PostDetailsV', {
                         params: item,
                         // request :true
                     })
@@ -159,7 +202,7 @@ const RentalHistory = (props) => {
                     //     params: item,
                     //     vendor: true
                     // })
-                    navigation.navigate('PostDetailsV', {
+                    props.navigation.navigate('PostDetailsV', {
                         params: item,
                         request: true
                     })
@@ -228,11 +271,12 @@ const RentalHistory = (props) => {
                         <Text style={{ fontFamily: 'LBo', fontSize: 18, color: '#FFFFFF', marginTop: 10 }}>Returned Rentals({returnedPosts.length})</Text>
                         {returnedPosts.length ? <TouchableOpacity
                             onPress={() => {
-                                navigation.navigate('ViewAllV', {
+                                props.navigation.navigate('ViewAllV', {
                                     data: returnedPosts,
                                     title: "Returned Rentals",
                                     request: false,
-                                    nextScreen: 'PostDetailsV'
+                                    nextScreen: 'PostDetailsV',
+                                    chat : true
                                 })
                             }}
                             style={{ position: 'absolute', right: 20, }}>
@@ -256,7 +300,7 @@ const RentalHistory = (props) => {
                         <Text style={{ fontFamily: 'LBo', fontSize: 18, color: '#FFFFFF', marginTop: 10 }}>Denied Rentals ({deniedPost.length})</Text>
                         {deniedPost.length ? <TouchableOpacity
                             onPress={() => {
-                                navigation.navigate('ViewAllV', {
+                                props.navigation.navigate('ViewAllV', {
                                     data: deniedPost,
                                     title: "Denied Posts",
                                     request: false,
@@ -274,7 +318,7 @@ const RentalHistory = (props) => {
                         contentContainerStyle={{ paddingRight: 10 }}
                         style={{ marginTop: 10, marginLeft: -15 }}
                         horizontal={true}
-                        renderItem={renderItems1}
+                        renderItem={renderDenied}
                         showsHorizontalScrollIndicator={false}
 
                     />

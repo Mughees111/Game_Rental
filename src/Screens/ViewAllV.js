@@ -27,7 +27,9 @@ const ViewAllV = (props) => {
                 onPress={() => {
                     props.navigation.navigate(props.route.params.nextScreen, {
                         params: item,
-                        request: props.route.params.request
+                        request: props.route.params.request,
+                        chat : props.route.params.chat?props.route.params.chat:false,
+                        title : props.route.params.title?props.route.params.title:"Out on rent"
                     })
                 }}
                 style={{ marginLeft: 15, width: 156, height: 183 }}>

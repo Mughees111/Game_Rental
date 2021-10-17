@@ -111,7 +111,7 @@ export const UserDrawer = () => {
                             route.name == 'MyBookings' ? { backgroundColor: '#CFF7A7' } : {}
                             ]}>
                             <OrderRevireIcon />
-                            <Text style={[styles.screenName, { marginLeft: 18 }]}>Order History</Text>
+                            <Text style={[styles.screenName, { marginLeft: 18 }]}>Rentel History</Text>
                         </TouchableOpacity>
 
                         {/* <TouchableOpacity
